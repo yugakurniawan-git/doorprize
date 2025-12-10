@@ -1,0 +1,15 @@
+@import 'tailwindcss';
+@theme {
+  --color-body: #F7FAFC;
+  --color-digital-forest: #00778B;
+  --color-maritime: #004C68;
+  --color-rise: #fec31d;
+  --color-primary: #c22423;
+}
+@layer base {
+  body {
+    @apply bg-body text-gray-800;
+    font-family: 'Roboto', sans-serif;
+    font-size: 11pt;
+  }
+}

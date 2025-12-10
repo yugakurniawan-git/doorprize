@@ -1,0 +1,16 @@
+stages:
+  - deploy
+
+deploy-job:
+  stage: deploy
+  script:
+    - cd /home/gagah/public_html/dev-uais
+    - git stash
+    - git pull
+    - docker compose up -d
+    - docker exec development-uais bash -c 'composer update'
+    - docker exec development-uais bash -c 'php artisan migrate'
+    - docker exec development-uais bash -c 'php artisan db:seed --class=RoleSeeder'
+    - docker restart development-uais development-uais-queue
+  tags:
+    - runner-vm-95

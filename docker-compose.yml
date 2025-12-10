@@ -1,0 +1,96 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/images/frankenphp82/Dockerfile
+    container_name: "${APP_NAME:-doorprize}-app"
+    working_dir: /app
+    volumes:
+      - ./:/app
+    command: sh -c "php artisan migrate --force && php artisan octane:start --server=frankenphp --host=0.0.0.0 --port=8000 --watch"
+    ports:
+      - "${APP_PORT:-8101}:8000"
+    # restart: always
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  queue:
+    build:
+      context: .
+      dockerfile: docker/images/frankenphp82/Dockerfile
+    container_name: "${APP_NAME:-doorprize}-queue"
+    working_dir: /app
+    volumes:
+      - ./:/app
+    command: php artisan queue:work -vvv --tries=3 --timeout=120
+    # restart: always
+
+  scheduler:
+    build:
+      context: .
+      dockerfile: docker/images/frankenphp82/Dockerfile
+    container_name: "${APP_NAME:-doorprize}-scheduler"
+    working_dir: /app
+    volumes:
+      - ./:/app
+    command: sh -c "while [ true ]; do php artisan schedule:run --verbose; sleep 60; done"
+    # restart: always
+
+  node:
+    image: node:22-alpine
+    container_name: "${APP_NAME:-doorprize}-node"
+    working_dir: /app
+    volumes:
+      - ./:/app
+    command: sh -c "npm install && npm run dev"
+    ports:
+      - "${VITE_PORT:-7401}:${VITE_PORT:-7401}"
+    # restart: always
+
+  mysql:
+    image: mysql:8.0
+    # restart: always
+    volumes:
+      - ./docker/mysql/data:/var/lib/mysql
+      - ./docker/mysql/backup:/backup
+      - ./docker/mysql/mysql.conf.d/mysqld.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-root}"
+      MYSQL_DATABASE: "${DB_DATABASE:-doorprize}"
+    ports:
+      - "${MYSQL_PORT:-3306}:3306"
+    container_name: "${APP_NAME:-doorprize}-mysql"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  redis:
+    image: redis:alpine
+    # restart: always
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    container_name: "${APP_NAME:-doorprize}-redis"
+
+  soketi:
+    image: quay.io/soketi/soketi:latest
+    container_name: "${APP_NAME:-doorprize}-soketi"
+    # restart: always
+    environment:
+      - PUSHER_APP_KEY=${PUSHER_APP_KEY}
+      - PUSHER_APP_CLUSTER=${PUSHER_APP_CLUSTER}
+      - PUSHER_HOST=${PUSHER_HOST}
+    ports:
+      - "${SOKETI_PORT:-6001}:6001"
+      - "${SOKETI_MONITOR_PORT:-9601}:9601"
+    volumes:
+      - ./docker/soketi.json:/etc/soketi.json
+    command: ["start", "--config=/etc/soketi.json"]
+
+name: "doorprize"
+networks:
+  default:
+    driver: bridge

@@ -1,0 +1,11 @@
+{
+    "debug": true,
+    "port": 5001,
+    "appManager.array.apps": [
+        {
+            "id": "6534365",
+            "key": "aas9d7fa9sdvzxcv8b79",
+            "secret": "asd67fas67d5f9asd657f9as6df7a9s"
+        }
+    ]
+}

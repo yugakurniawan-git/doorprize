@@ -1,0 +1,10 @@
+[
+  {
+    "name": "Manajemen User",
+    "url": "/users"
+  },
+  {
+    "name": "Manajemen Hadiah",
+    "url": "/doorprizes"
+  }
+]

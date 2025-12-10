@@ -16,7 +16,7 @@ function GuestLayout({ children, greeting }) {
       <div className="w-full lg:w-2/6">
         <div className="min-h-screen flex flex-col justify-center items-center pt-6 sm:pt-0">
           <a href="/">
-            <img src="/logo/Logo-Mahaghora-footer-300.png" alt="logo" className="h-16" />
+            <img src="/logo/128x128.png" alt="logo" className="" />
           </a>
           <div className="my-8 text-center">
             { greeting }

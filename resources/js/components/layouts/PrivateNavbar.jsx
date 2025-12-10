@@ -78,7 +78,7 @@ function PrivateNavbar({ setShowNavbar }) {
           </div>
           <div className="flex w-44 sm:w-32 lg:w-44 h-auto items-center justify-center md:justify-start">
             <Link to={`/`}>
-              <img src="/logo/Logo-Mahaghora-footer-300.png" alt="Logo" className="w-20" />
+              <img src="/logo/72x72.png" alt="Logo" className="w-14" />
             </Link>
           </div>
           <div className="hidden lg:flex sm:w-1/2 lg:w-[65vw] sm:justify-center sm:items-center">
@@ -94,7 +94,7 @@ function PrivateNavbar({ setShowNavbar }) {
                 <div className="flex justify-center items-center pr-2 cursor-pointer">
                   <img
                     src={
-                      storage_url(user?.avatar) || "/storage/noavatar.png"
+                      storage_url(user?.avatar || "/noavatar.png")
                     }
                     alt="Avatar"
                     className=" w-12 h-12 rounded-full"
@@ -107,7 +107,7 @@ function PrivateNavbar({ setShowNavbar }) {
                   {/* avatar */}
                   <img
                     src={
-                      storage_url(user?.avatar) || "/storage/noavatar.png"
+                      storage_url(user?.avatar || "/noavatar.png")
                     }
                     alt="Avatar"
                     className="w-24 h-24 mx-auto rounded-full mb-2"
@@ -115,12 +115,6 @@ function PrivateNavbar({ setShowNavbar }) {
                   {/* name */}
                   <h2 className="text-lg">{user?.name}</h2>
                   <p className="text-sm text-rise">{user?.email} </p>
-                  <p className="text-sm mt-4">
-                    {
-                      user?.mapping_employee_user?.employment_status_history
-                        ?.employee_identify_number
-                    }
-                  </p>
                 </div>
               </Dropdown.Custom>
               <Dropdown.Item onClick={logout}>

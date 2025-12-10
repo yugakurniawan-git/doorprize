@@ -1,10 +1,10 @@
 [
   {
-    "name": "Manajemen User",
+    "name": "Users Management",
     "url": "/users"
   },
   {
-    "name": "Manajemen Hadiah",
+    "name": "Doorprizes Management",
     "url": "/doorprizes"
   }
 ]

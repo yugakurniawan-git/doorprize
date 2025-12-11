@@ -134,7 +134,7 @@ function ModalForm({ openModal, isEdit, setOpenModal, user, setUser, loadData })
               error={errorUser?.username}
             />
             <SelectAsyncPaginate
-              label="Role"
+              label="Roles"
               name="roles[]"
               url="/api/roles?fields[]=id&fields[]=name"
               getOptionValue={(option) => option.name}

@@ -19,16 +19,19 @@ class RoleSeeder extends Seeder
     createRoleWithPermissions('Super Admin', [
       'view list users',
       'create user',
+      'view user',
       'edit user',
       'delete user',
 
       'view list roles',
       'create role',
+      'view role',
       'edit role',
       'delete role',
 
       'view list permissions',
       'create permission',
+      'view permission',
       'edit permission',
       'delete permission',
     ]);

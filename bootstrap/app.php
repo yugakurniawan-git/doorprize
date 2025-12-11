@@ -22,10 +22,10 @@ return Application::configure(basePath: dirname(__DIR__))
   ->withMiddleware(function (Middleware $middleware): void {
     $middleware->append(\App\Http\Middleware\TrustProxies::class);
     $middleware->alias([
-      'auth'        => Authenticate::class,
-      'api_key'     => ApiKeyMiddleware::class,
-      'permission'  => Permission::class,
-      'role'        => Role::class,
+      'auth'    => Authenticate::class,
+      'api_key' => ApiKeyMiddleware::class,
+      'can'     => Permission::class,
+      'role'    => Role::class,
     ]);
   })
   ->withExceptions(function (Exceptions $exceptions): void {

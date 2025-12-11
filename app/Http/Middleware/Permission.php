@@ -16,7 +16,7 @@ class Permission
    */
   public function handle($request, Closure $next, $permission)
   {
-    if (Auth::check() && hasPermission($permission)) {
+    if (Auth::check() && can($permission)) {
       return $next($request);
     }
 

@@ -32,7 +32,6 @@ class AuthController extends Controller
       }
 
       $response = [
-        'success'   => true,
         'token'     => $token,
         'expires_in' => Auth::factory()->getTTL()
       ];
@@ -42,7 +41,6 @@ class AuthController extends Controller
 
     } else {
       return response()->json([
-        'success' => false,
         'message' => __('auth.failed')
       ], 401);
     }
@@ -50,6 +48,7 @@ class AuthController extends Controller
 
   /**
    * Get the authenticated User.
+   * @response array{"id": "string", "name": "string", "email": "string", "email_verified_at": "string|null", "username": "string", "avatar": "string|null", "created_at": "string", "updated_at": "string", "deleted_at": "string|null", "created_by": "int|null", "updated_by": "int|null", "deleted_by": "int|null", "role_names": array<string>, "permission_names": array<string>}
    */
   public function profile(Request $request)
   {
@@ -57,10 +56,7 @@ class AuthController extends Controller
     $data = $user->toArray();
     $data['role_names']         = $user->roles()->pluck('name');
     $data['permission_names']   = $user->getAllPermissions()->pluck('name');
-    return response()->json([
-      'success'   => true,
-      'data'      => $data,
-    ], 200);
+    return $data;
   }
 
   /**

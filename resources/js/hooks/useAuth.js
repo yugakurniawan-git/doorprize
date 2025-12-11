@@ -5,7 +5,7 @@ export default function useAuth() {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
 
-  function hasPermission(permissionName) {
+  function can(permissionName) {
     return user?.permission_names?.includes(permissionName);
   }
 
@@ -21,5 +21,5 @@ export default function useAuth() {
     dispatch(logout());
   };
 
-  return { user, hasPermission, hasRole, handleLogin, handleLogout };
+  return { user, can, hasRole, handleLogin, handleLogout };
 };

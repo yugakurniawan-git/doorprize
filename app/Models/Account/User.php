@@ -2,33 +2,20 @@
 
 namespace App\Models\Account;
 
+use App\Models\BaseModel;
+use App\Models\CustomSoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Spatie\Activitylog\LogOptions;
-use Spatie\Activitylog\Traits\LogsActivity;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject
 {
-  use LogsActivity, HasFactory, Notifiable;
+  use BaseModel, CustomSoftDeletes, HasFactory, Notifiable;
 
-  protected $table = 'users';
-
-  public function getActivitylogOptions(): LogOptions
-  {
-    return LogOptions::defaults()
-      ->logAll()
-      ->useLogName('Account')
-      ->setDescriptionForEvent(fn(string $eventName) => "User has been $eventName")
-      ->logOnlyDirty();
-  }
-
-  /**
-   * The attributes that are mass assignable.
-   *
-   * @var array<int, string>
-   */
+  protected $table      = 'users';
+  public $incrementing  = false;
+  protected $keyType    = 'string';
   protected $fillable = [
     'id',
     'name',

@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Events\LoadDataEvent;
-use App\Models\SSO\User;
+use App\Models\Account\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -11,7 +11,7 @@ use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Support\Str;
 
-class BaseModel extends Model
+trait BaseModel
 {
   use LogsActivity;
 
@@ -22,8 +22,8 @@ class BaseModel extends Model
         $model->{$model->getKeyName()} = (string) Str::uuid();
       }
       if (Auth::check() && $model->fillable && in_array('created_by', $model->fillable) && in_array('updated_by', $model->fillable)) {
-        $model->created_by = Auth::user()->username;
-        $model->updated_by = Auth::user()->username;
+        $model->created_by = Auth::user()->id;
+        $model->updated_by = Auth::user()->id;
       }
       event(new LoadDataEvent([
         'action'  => 'load-data',
@@ -32,7 +32,7 @@ class BaseModel extends Model
     });
     static::updating(function ($model) {
       if (Auth::check() && $model->fillable && in_array('updated_by', $model->fillable)) {
-        $model->updated_by = Auth::user()->username;
+        $model->updated_by = Auth::user()->id;
       }
       event(new LoadDataEvent([
         'action'  => 'load-data',
@@ -316,30 +316,27 @@ class BaseModel extends Model
       $query->orderBy($sortBy, $sortType);
     }
 
-    $paginated = $query->paginate(
+    return $query->paginate(
       request('per_page', $options['per_page']),
       ['*'],
       'page',
       request('page', $options['page'])
     );
 
-    $response = $paginated->toArray();
-    $response['success'] = true;
-    return $response;
   }
 
   public function creator()
   {
-    return $this->belongsTo(User::class, 'created_by', 'username');
+    return $this->belongsTo(User::class, 'created_by', 'id');
   }
 
   public function updater()
   {
-    return $this->belongsTo(User::class, 'updated_by', 'username');
+    return $this->belongsTo(User::class, 'updated_by', 'id');
   }
 
   public function deleter()
   {
-    return $this->belongsTo(User::class, 'deleted_by', 'username');
+    return $this->belongsTo(User::class, 'deleted_by', 'id');
   }
 }

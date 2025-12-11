@@ -3,14 +3,17 @@
 namespace App\Models\Account;
 
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Model;
 
-class ModelHasRole extends BaseModel
+class ModelHasRole extends Model
 {
-  protected $table = 'model_has_roles';
-  public $timestamps = false;
-  public $incrementing = false;
+  use BaseModel;
+
+  protected $table      = 'model_has_roles';
+  public $timestamps    = false;
+  public $incrementing  = false;
   protected $primaryKey = null;
-  protected $fillable = [
+  protected $fillable   = [
     'role_id',
     'model_type',
     'model_id',

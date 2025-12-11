@@ -21,7 +21,7 @@ function ProtectedPage() {
     const token = localStorage.getItem("token");
     if (token) {
       const response = await apiService("get", "/api/profile");
-      if (response.success) {
+      if (response.status == 200) {
         setIsLogin(true);
         handleLogin(response.data);
         return;

@@ -37,25 +37,31 @@ export const apiService = async (method, url, options = {}) => {
       signal,
       cancelToken,
     });
-    return response.data;
+    return response;
   } catch (error) {
     if (error.response) {
-      return {
-        success: false,
-        message: `${error.response.data?.message || "Response error"}`,
-        errors: error.response.data.errors || {}
-      };
+      return error.response;
     }
+
     if (error.request) {
-      return {
-        success: false,
-        message: `${"We indicated an issue, no response from the server, please check your network connection or server is under maintenance, please try again later"}`,
-      };
+      Swal.fire({
+        title: "Failed",
+        text: `${"We indicated an issue, no response from the server, please check your network connection or server is under maintenance, please try again later"}`,
+        icon: "error",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#004C68"
+      });
+    } else {
+      Swal.fire({
+        title: "Failed",
+        text: `${"Call API configuration error"} ${error.message}`,
+        icon: "error",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#004C68"
+      });
     }
-    return {
-      success: false,
-      message: `${"Call API configuration error"} ${error.message}`,
-    };
+
+    return error;
   }
 };
 
@@ -78,11 +84,7 @@ export const apiServicePost = async (url, data, options = {}) => {
       headers: { ...apiClient.defaults.headers, ...headers },
     });
     Swal.close();
-    Toast.fire({
-      icon: response.data.success ? 'success' : 'error',
-      title: response.data.message
-    });
-    return response.data;
+    return response;
   } catch (error) {
     Swal.close();
     if (error.response) {
@@ -102,12 +104,9 @@ export const apiServicePost = async (url, data, options = {}) => {
           confirmButtonColor: "#004C68"
         });
       }
-      return {
-        success: false,
-        message: `${error.response.data?.message || "Response error"}`,
-        errors: error.response.data.errors || {}
-      };
+      return error.response;
     }
+
     if (error.request) {
       Swal.fire({
         title: "Failed",
@@ -116,25 +115,17 @@ export const apiServicePost = async (url, data, options = {}) => {
         confirmButtonText: "OK",
         confirmButtonColor: "#004C68"
       });
-      return {
-        success: false,
-        message: `${"We indicated an issue, no response from the server, please check your network connection or server is under maintenance, please try again later"}`,
-        errors: error.response.data.errors || {}
-      };
+    } else {
+      Swal.fire({
+        title: "Failed",
+        text: `${"Call API configuration error"} ${error.message}`,
+        icon: "error",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#004C68"
+      });
     }
 
-    Swal.fire({
-      title: "Failed",
-      text: `${"Call API configuration error"} ${error.message}`,
-      icon: "error",
-      confirmButtonText: "OK",
-      confirmButtonColor: "#004C68"
-    });
-    return {
-      success: false,
-      message: `${"Call API configuration error"} ${error.message}`,
-      errors: error.response.data.errors || {}
-    };
+    return error;
   }
 }
 
@@ -157,21 +148,7 @@ export const apiServiceDelete = async (url, options = {}, type = 0) => {
       headers: { ...apiClient.defaults.headers, ...headers }
     });
     Swal.close();
-    if (type == 1) {
-      Swal.fire({
-        title: response.data.success ? 'Success' : 'Failed',
-        text: response.data.message,
-        icon: response.data.success ? 'success' : 'error',
-        confirmButtonText: "OK",
-        confirmButtonColor: "#004C68"
-      });
-    } else {
-      Toast.fire({
-        icon: response.data.success ? 'success' : 'error',
-        title: response.data.message
-      });
-    }
-    return response.data;
+    return response;
   } catch (error) {
     Swal.close();
     if (error.response) {
@@ -184,11 +161,9 @@ export const apiServiceDelete = async (url, options = {}, type = 0) => {
           confirmButtonColor: "#004C68"
         });
       }
-      return {
-        success: false,
-        message: `${error.response.data?.message || "Response error"}`,
-      };
+      return error.response;
     }
+
     if (error.request) {
       Swal.fire({
         title: "Failed",
@@ -197,22 +172,16 @@ export const apiServiceDelete = async (url, options = {}, type = 0) => {
         confirmButtonText: "OK",
         confirmButtonColor: "#004C68"
       });
-      return {
-        success: false,
-        message: `${"We indicated an issue, no response from the server, please check your network connection or server is under maintenance, please try again later"}`,
-      };
+    } else {
+      Swal.fire({
+        title: "Failed",
+        text: `${"Call API configuration error"} ${error.message}`,
+        icon: "error",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#004C68"
+      });
     }
 
-    Swal.fire({
-      title: "Failed",
-      text: `${"Call API configuration error"} ${error.message}`,
-      icon: "error",
-      confirmButtonText: "OK",
-      confirmButtonColor: "#004C68"
-    });
-    return {
-      success: false,
-      message: `${"Call API configuration error"} ${error.message}`,
-    };
+    return error;
   }
 }

@@ -35,7 +35,7 @@ return new class extends Migration
 
     Schema::create('model_has_permissions', function (Blueprint $table) {
       $table->unsignedBigInteger('permission_id');
-      $table->unsignedBigInteger('model_id');
+      $table->string('model_id');
       $table->string('model_type');
       $table->index(['model_id', 'model_type'], 'model_has_permissions_model_id_model_type_index');
       $table->foreign('permission_id')->references('id')->on('permissions')->onDelete('cascade');
@@ -43,7 +43,7 @@ return new class extends Migration
 
     Schema::create('model_has_roles', function (Blueprint $table) {
       $table->unsignedBigInteger('role_id');
-      $table->unsignedBigInteger('model_id');
+      $table->string('model_id');
       $table->string('model_type');
       $table->index(['model_id', 'model_type'], 'model_has_roles_model_id_model_type_index');
       $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');

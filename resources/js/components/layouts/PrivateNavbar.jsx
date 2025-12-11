@@ -10,6 +10,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Dropdown from "../elements/Dropdown";
 import useAuth from "../../hooks/useAuth";
+import { apiService } from "../../services/api.services";
 
 export function filterMenusByPermission(menus, userPermissions) {
   return menus
@@ -53,8 +54,9 @@ function PrivateNavbar({ setShowNavbar }) {
   const { user } = useAuth();
   const filteredMenus = filterMenusByPermission(menu, user.permission_names);
 
-  const logout = (e) => {
+  const logout = async (e) => {
     e.preventDefault();
+    await apiService('post', '/api/logout');
     localStorage.removeItem("token");
     location.reload();
   };
@@ -93,9 +95,7 @@ function PrivateNavbar({ setShowNavbar }) {
               label={
                 <div className="flex justify-center items-center pr-2 cursor-pointer">
                   <img
-                    src={
-                      storage_url(user?.avatar || "/noavatar.png")
-                    }
+                    src={storage_url(user?.avatar || "/noavatar.png")}
                     alt="Avatar"
                     className=" w-12 h-12 rounded-full"
                   />

@@ -16,15 +16,7 @@ trait CustomSoftDeletes
     if ($this->forceDeleting) {
       parent::performDeleteOnModel();
     } else {
-      $username = Auth::check() ? Auth::user()->username : null;
-      if ($this->neofeeder_status) {
-        neofeederStatus(Auth::user()->username, [
-          'model_type'  => get_class($this),
-          'model_id'    => $this->id,
-          'synced'      => 0
-        ]);
-      }
-      $this->deleted_by = $username;
+      $this->deleted_by = Auth::check() ? Auth::user()->id : null;
       $this->deleted_at = $this->freshTimestamp();
       $this->saveQuietly();
     }

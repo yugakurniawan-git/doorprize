@@ -3,11 +3,14 @@
 namespace App\Models\Account;
 
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Model;
 
-class ModelHasPermission extends BaseModel
+class ModelHasPermission extends Model
 {
-  protected $table = 'model_has_permissions';
-  public $timestamps = false;
+  use BaseModel;
+
+  protected $table    = 'model_has_permissions';
+  public $timestamps  = false;
   protected $fillable = [
     'permission_id',
     'model_type',

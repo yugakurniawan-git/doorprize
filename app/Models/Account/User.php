@@ -117,11 +117,29 @@ class User extends Authenticatable implements JWTSubject
     return false;
   }
 
-  public function assignRole($roleName)
+  public function assignRole($roleNames)
   {
-    $role = Role::where('name', $roleName)->first();
-    if ($role) {
-      $this->roles()->attach($role->id, ['model_type' => self::class]);
+    $roles = is_array($roleNames) ? $roleNames : explode('|', $roleNames);
+
+    foreach ($roles as $roleName) {
+      $roleName = trim($roleName);
+      $role = Role::where('name', $roleName)->first();
+      if ($role && !$this->roles()->where('role_id', $role->id)->exists()) {
+        $this->roles()->attach($role->id, ['model_type' => self::class]);
+      }
+    }
+  }
+
+  public function assignPermission($permissionNames)
+  {
+    $permissions = is_array($permissionNames) ? $permissionNames : explode('|', $permissionNames);
+
+    foreach ($permissions as $permissionName) {
+      $permissionName = trim($permissionName);
+      $permission = Permission::where('name', $permissionName)->first();
+      if ($permission && !$this->special_permissions()->where('permission_id', $permission->id)->exists()) {
+        $this->special_permissions()->attach($permission->id, ['model_type' => self::class]);
+      }
     }
   }
 

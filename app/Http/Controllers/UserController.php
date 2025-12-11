@@ -51,10 +51,16 @@ class UserController extends Controller
       'name'          => 'required|string|max:100',
       'email'         => 'required|string|email|max:100|unique:users,email,' . $request->id,
       'username'      => 'required|string|max:50|unique:users,username,' . $request->id,
+      'roles'         => 'sometimes|array',
+      'roles.*'       => 'string|exists:roles,name',
+      'permissions'    => 'sometimes|array',
+      'permissions.*'  => 'string|exists:permissions,name',
     ], [], [
       'name'          => 'Name',
       'email'         => 'Email',
       'username'      => 'Username',
+      'roles'         => 'Roles',
+      'permissions'   => 'Permissions',
     ]);
 
     if (!isset($request->id)) {
@@ -62,6 +68,18 @@ class UserController extends Controller
     }
 
     $user = User::updateOrCreate(['id' => $request->id], $data);
+    if (isset($data['roles'])) {
+      $user->roles()->detach();
+      foreach ($data['roles'] as $roleName) {
+        $user->assignRole($roleName);
+      }
+    }
+    if (isset($data['permissions'])) {
+      $user->special_permissions()->detach();
+      foreach ($data['permissions'] as $permissionName) {
+        $user->assignPermission($permissionName);
+      }
+    }
     return $user;
   }
 

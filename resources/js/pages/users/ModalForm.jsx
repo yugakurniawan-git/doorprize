@@ -5,6 +5,7 @@ import { useState } from "react";
 import { apiServiceDelete, apiServicePost } from "../../services/api.services";
 import Swal from "sweetalert2";
 import { Toast } from "../../helpers";
+import SelectAsyncPaginate from "../../components/elements/input/SelectAsyncPaginate";
 
 function ModalForm({ openModal, isEdit, setOpenModal, user, setUser, loadData }) {
   const [errorUser, setErrorUser] = useState({});
@@ -12,12 +13,20 @@ function ModalForm({ openModal, isEdit, setOpenModal, user, setUser, loadData })
 	async function handleSubmit(event) {
 		event.preventDefault();
 		const formData = new FormData(event.target);
+
+    if (formData.getAll("permissions[]").length == 1 && formData.getAll("permissions[]")[0] === "") {
+      formData.delete("permissions[]");
+    }
+    if (formData.getAll("roles[]").length == 1 && formData.getAll("roles[]")[0] === "") {
+      formData.delete("roles[]");
+    }
+
 		const response = await apiServicePost("/api/users",formData);
 		if ([200, 201].includes(response.status)) {
       loadData();
-			setOpenModal(false);
+			setOpenModal((prev) => ({...prev, form: false}));
       setErrorUser({});
-      setUser({});
+      setUser(null);
       Toast.fire({
         icon: 'success',
         title: isEdit ? 'User updated successfully' : 'User added successfully'
@@ -40,8 +49,8 @@ function ModalForm({ openModal, isEdit, setOpenModal, user, setUser, loadData })
 				const response = await apiServiceDelete(`/api/users/${user.id}`);
 				if (response.status == 200) {
 					loadData();
-          setOpenModal(false);
-          setUser({});
+          setOpenModal((prev) => ({...prev, form: false}));
+          setUser(null);
           setErrorUser({});
           Toast.fire({
             icon: 'success',
@@ -53,7 +62,11 @@ function ModalForm({ openModal, isEdit, setOpenModal, user, setUser, loadData })
 	}
 
   return (
-    <Modal show={openModal} onClose={() => setOpenModal(false)}>
+    <Modal show={openModal} onClose={() => {
+      setOpenModal((prev) => ({...prev, form: false}));
+      setErrorUser(null);
+      setUser(null);
+    }}>
       <form
         className="mb-0"
         onSubmit={(event) => handleSubmit(event)}
@@ -120,6 +133,56 @@ function ModalForm({ openModal, isEdit, setOpenModal, user, setUser, loadData })
               }}
               error={errorUser?.username}
             />
+            <SelectAsyncPaginate
+              label="Role"
+              name="roles[]"
+              url="/api/roles?fields[]=id&fields[]=name"
+              getOptionValue={(option) => option.name}
+              getOptionLabel={(option) => option.name}
+              isMulti={true}
+              value={user?.roles}
+              onChange={(selectedOption) => {
+                setUser((prev) => ({
+                  ...prev,
+                  roles: selectedOption,
+                }));
+                setErrorUser((prev) => ({
+                  ...prev,
+                  roles: null,
+                }));
+              }}
+              menuPlacement="top"
+              menuPortalTarget={document.body}
+              styles={{ menuPortal: (base) => ({ ...base, zIndex: 999999 }) }}
+            />
+            <SelectAsyncPaginate
+              label="Special Permissions"
+              name="permissions[]"
+              url="/api/permissions?fields[]=id&fields[]=name"
+              getOptionValue={(option) => option.name}
+              getOptionLabel={(option) => option.name}
+              isMulti={true}
+              value={user?.permissions}
+              onChange={(selectedOption) => {
+                if (selectedOption.length > 0) {
+                  setUser((prev) => ({
+                    ...prev,
+                    permissions: selectedOption,
+                  }));
+                } else {
+                  const updatedUser = { ...user };
+                  delete updatedUser.permissions;
+                  setUser(updatedUser);
+                }
+                setErrorUser((prev) => ({
+                  ...prev,
+                  permissions: null,
+                }));
+              }}
+              menuPlacement="top"
+              menuPortalTarget={document.body}
+              styles={{ menuPortal: (base) => ({ ...base, zIndex: 999999 }) }}
+            />
           </div>
         </Modal.Body>
         <Modal.Footer className={`flex justify-between items-center gap-2`}>
@@ -127,7 +190,7 @@ function ModalForm({ openModal, isEdit, setOpenModal, user, setUser, loadData })
             <Button type="button" bg="bg-red-500" onClick={handleDelete}>Delete</Button>
           )}
           <div className="flex gap-2 ms-auto">
-            <Button type="button" bg="bg-gray-500" onClick={() => setOpenModal(false)}>Cancel</Button>
+            <Button type="button" bg="bg-gray-500" onClick={() => setOpenModal((prev) => ({...prev, form: false}))}>Cancel</Button>
             <Button type="submit">Submit</Button>
           </div>
         </Modal.Footer>

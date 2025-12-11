@@ -20,8 +20,8 @@ function Form() {
     const response = await apiService("post","/api/login", {
       data: account
     });
-    if (response.status == 201) {
-      localStorage.setItem("token", response.data.token);
+    if (response.status == 200) {
+      localStorage.setItem("token", response.data);
       const profile = await apiService("get","/api/profile");
       handleLogin(profile);
       Toast.fire({

@@ -15,8 +15,8 @@ const SelectAsyncPaginate = forwardRef(({ params, loadOptions, label, required, 
 			},
 		});
 		return {
-			options: response.data,
-			hasMore: response.next_page_url ? true : false,
+			options: response.data.data,
+			hasMore: response.data.next_page_url ? true : false,
 			additional: {
 				page: page + 1 ,
 			},

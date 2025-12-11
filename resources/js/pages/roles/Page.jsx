@@ -15,23 +15,23 @@ import useAuth from "../../hooks/useAuth";
 
 function Page() {
   useLoadData((data) => {
-    if (data.action === 'load-data' && data.table === 'permissions') {
-      getPermissions();
+    if (data.action === 'load-data' && data.table === 'roles') {
+      getRoles();
     }
   });
   const [params, setParams] = useUrlParams();
   const { can } = useAuth();
-  if (!can("view list permissions")) {
+  if (!can("view list roles")) {
     return <Error403Page />;
   }
 
-  const [permissions, setPermissions] = useState({});
-  const [permission, setPermission] = useState({});
+  const [roles, setRoles] = useState({});
+  const [role, setRole] = useState({});
 	const [isLoading, setIsLoading] = useState(true);
 	const [openModal, setOpenModal] = useState(false);
 
   useEffect(() => {
-    document.title = "Doorprize - Permissions Management";
+    document.title = "Doorprize - Roles Management";
     setParams((prev) => ({
       ...prev,
       sort_by: params.sort_by || "created_at",
@@ -40,7 +40,7 @@ function Page() {
   }, []);
 
 	useEffect(() => {
-		getPermissions(true);
+		getRoles(true);
 	}, [
     params.sort_by,
     params.sort_type,
@@ -49,29 +49,29 @@ function Page() {
     params.q,
   ]);
 
-	async function getPermissions(loading = false) {
+	async function getRoles(loading = false) {
 		setIsLoading(loading);
-		const response = await apiService("GET", "/api/permissions", {
+		const response = await apiService("GET", "/api/roles", {
 			params: {
 				...params,
 			},
 		});
-    setPermissions(response.data);
+    setRoles(response.data);
     setIsLoading(false);
 	}
 
   return (
     <PrivateLayout>
       <TableCard
-        title="Permissions Management"
-        response={permissions}
+        title="Roles Management"
+        response={roles}
         setParams={setParams}
         params={params}
         isLoading={isLoading}
         setIsLoading={setIsLoading}
         action={(
           <Button data-tooltip-id="tooltip" data-tooltip-content="Add Academic Calendar" onClick={() => {
-            setPermission({});
+            setRole({});
             setOpenModal(true);
           }}>
             <div className="flex flex-row justify-center items-center gap-2">
@@ -89,19 +89,19 @@ function Page() {
             </tr>
           </TableCard.Thead>
           <TableCard.Tbody>
-            {isLoading ? <TableCard.Loading totalColumns={5} /> : permissions?.data?.length > 0 ? (
-              permissions?.data?.map((item, index) => (
+            {isLoading ? <TableCard.Loading totalColumns={5} /> : roles?.data?.length > 0 ? (
+              roles?.data?.map((item, index) => (
                 <TableCard.Tr
                   key={item.id}
-                  className={can("create permission") ? "cursor-pointer" : ""}
+                  className={can("create role") ? "cursor-pointer" : ""}
                   onClick={() => {
-                    if (can("create permission")) {
-                      setPermission(item);
+                    if (can("create role")) {
+                      setRole(item);
                       setOpenModal(true);
                     }
                   }}
                 >
-                  <TableCard.Td>{no(permission, index + 1)}</TableCard.Td>
+                  <TableCard.Td>{no(roles, index + 1)}</TableCard.Td>
                   <TableCard.Td>{item.name}</TableCard.Td>
                   <TableCard.Td>{moment(item.created_at).format('lll')}</TableCard.Td>
                 </TableCard.Tr>
@@ -112,11 +112,11 @@ function Page() {
       </TableCard>
       <ModalForm
         openModal={openModal}
-        isEdit={permission?.id ? true : false}
+        isEdit={role?.id ? true : false}
         setOpenModal={setOpenModal}
-        permission={permission}
-        setPermission={setPermission}
-        loadData={getPermissions}
+        role={role}
+        setRole={setRole}
+        loadData={getRoles}
       />
     </PrivateLayout>
   );

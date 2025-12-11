@@ -53,8 +53,8 @@ class UserController extends Controller
       'username'      => 'required|string|max:50|unique:users,username,' . $request->id,
       'roles'         => 'sometimes|array',
       'roles.*'       => 'string|exists:roles,name',
-      'permissions'    => 'sometimes|array',
-      'permissions.*'  => 'string|exists:permissions,name',
+      'permissions'   => 'sometimes|array',
+      'permissions.*' => 'string|exists:permissions,name',
     ], [], [
       'name'          => 'Name',
       'email'         => 'Email',
@@ -68,19 +68,21 @@ class UserController extends Controller
     }
 
     $user = User::updateOrCreate(['id' => $request->id], $data);
+    $user->roles()->detach();
     if (isset($data['roles'])) {
-      $user->roles()->detach();
       foreach ($data['roles'] as $roleName) {
         $user->assignRole($roleName);
       }
     }
+
+    $user->special_permissions()->detach();
     if (isset($data['permissions'])) {
-      $user->special_permissions()->detach();
       foreach ($data['permissions'] as $permissionName) {
         $user->assignPermission($permissionName);
       }
     }
-    return $user;
+
+    return $user->load('roles:id,name', 'special_permissions:id,name');
   }
 
   /**

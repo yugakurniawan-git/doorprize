@@ -5,13 +5,16 @@ import { no } from "../../helpers";
 import TableCard from "../../components/fragments/TableCard";
 import { apiService } from "../../services/api.services";
 import Button from "../../components/elements/Button";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faFilter, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import useUrlParams from "../../hooks/useUrlParams";
 import ModalForm from "./ModalForm";
 import useLoadData from "../../hooks/useLoadData";
 import moment from "moment";
 import useAuth from "../../hooks/useAuth";
+import Dropdown from "../../components/elements/Dropdown";
+import useWindowSize from "../../hooks/useWindowSize";
+import ModalFilter from "./ModalFilter";
 
 function Page() {
   useLoadData((data) => {
@@ -20,6 +23,7 @@ function Page() {
     }
   });
   const [params, setParams] = useUrlParams();
+  const { width } = useWindowSize();
   const { can } = useAuth();
   if (!can("view list users")) {
     return <Error403Page />;
@@ -47,12 +51,17 @@ function Page() {
     params.page,
     params.per_page,
     params.q,
+    params["roles->id:in"],
   ]);
 
 	async function getUsers(loading = false) {
 		setIsLoading(loading);
 		const response = await apiService("GET", "/api/users", {
 			params: {
+        include: [
+          "roles:id,name",
+          "special_permissions:id,name"
+        ],
 				...params,
 			},
 		});
@@ -70,14 +79,28 @@ function Page() {
         isLoading={isLoading}
         setIsLoading={setIsLoading}
         action={(
-          <Button data-tooltip-id="tooltip" data-tooltip-content="Add Academic Calendar" onClick={() => {
-            setUser({});
-            setOpenModal(true);
-          }}>
-            <div className="flex flex-row justify-center items-center gap-2">
-              <FontAwesomeIcon icon={faPlus} />
-            </div>
-          </Button>
+          <Dropdown
+            useCaret={false}
+            align={width < 640 ? "" : "right"}
+            label={
+              <div className="flex flex-row justify-center items-center gap-2">
+                <FontAwesomeIcon
+                  icon={faBars}
+                  data-tooltip-id="tooltip"
+                  data-tooltip-content="Actions"
+                />
+              </div>
+            }
+          >
+            {can("create user") && (
+              <Dropdown.Item onClick={() => setOpenModal((prev) => ({...prev, form: true}))}>
+                <FontAwesomeIcon className="me-1" icon={faPlus} /> Add
+              </Dropdown.Item>
+            )}
+            <Dropdown.Item onClick={() => setOpenModal((prev) => ({...prev, filters: true}))}>
+              <FontAwesomeIcon className="me-1" icon={faFilter} /> Filters
+            </Dropdown.Item>
+          </Dropdown>
         )}
       >
         <TableCard.Table>
@@ -87,40 +110,58 @@ function Page() {
               <TableCard.Th className="text-start" sortBy="name">Name</TableCard.Th>
               <TableCard.Th className="text-start" sortBy="email">Email</TableCard.Th>
               <TableCard.Th className="text-start" sortBy="username">Username</TableCard.Th>
+              <TableCard.Th className="text-start" sortBy="roles->name">Roles</TableCard.Th>
               <TableCard.Th className="text-start" sortBy="created_at">Created At</TableCard.Th>
             </tr>
           </TableCard.Thead>
           <TableCard.Tbody>
-            {isLoading ? <TableCard.Loading totalColumns={5} /> : users?.data?.length > 0 ? (
+            {isLoading ? <TableCard.Loading totalColumns={6} /> : users?.data?.length > 0 ? (
               users?.data?.map((item, index) => (
                 <TableCard.Tr
                   key={item.id}
                   className={can("create user") ? "cursor-pointer" : ""}
                   onClick={() => {
                     if (can("create user")) {
-                      setUser(item);
-                      setOpenModal(true);
+                      if (item.special_permissions.length > 0) {
+                        const updatedUser = {...item};
+                        updatedUser.permissions = item.special_permissions.map(item => ({
+                          id: item.id,
+                          name: item.name,
+                        }));
+                        delete updatedUser.special_permissions;
+                        setUser({...updatedUser});
+                      } else {
+                        setUser({...item});
+                      }
+                      setOpenModal((prev) => ({...prev, form: true}));
                     }
                   }}
                 >
-                  <TableCard.Td>{no(user, index + 1)}</TableCard.Td>
+                  <TableCard.Td>{no(users, index + 1)}</TableCard.Td>
                   <TableCard.Td>{item.name}</TableCard.Td>
                   <TableCard.Td>{item.email}</TableCard.Td>
                   <TableCard.Td>{item.username}</TableCard.Td>
+                  <TableCard.Td>{item.roles?.map(role => role.name).join(', ')}</TableCard.Td>
                   <TableCard.Td>{moment(item.created_at).format('lll')}</TableCard.Td>
                 </TableCard.Tr>
               ))
-            ) : <TableCard.Empty totalColumns={5} />}
+            ) : <TableCard.Empty totalColumns={6} />}
           </TableCard.Tbody>
         </TableCard.Table>
       </TableCard>
       <ModalForm
-        openModal={openModal}
+        openModal={openModal?.form || false}
         isEdit={user?.id ? true : false}
         setOpenModal={setOpenModal}
         user={user}
         setUser={setUser}
         loadData={getUsers}
+      />
+      <ModalFilter
+        openModal={openModal?.filters || false}
+        setOpenModal={setOpenModal}
+        params={params}
+        setParams={setParams}
       />
     </PrivateLayout>
   );

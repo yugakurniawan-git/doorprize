@@ -22,15 +22,17 @@ class Authenticate
   {
     Auth::forgetGuards();
 
-    if ($token = JWTAuth::getToken()) {
-      // Paksa pakai guard ini
-      $data_user = JWTAuth::getPayload($token)->get('user');
-      $user = User::where($data_user)->first();
-      if ($user) {
-        Auth::setUser($user);
-        return $next($request);
+    try {
+      if ($token = JWTAuth::getToken()) {
+        // Paksa pakai guard ini
+        $data_user = JWTAuth::getPayload($token)->get('user');
+        $user = User::where($data_user)->first();
+        if ($user) {
+          Auth::setUser($user);
+          return $next($request);
+        }
       }
-    }
+    } catch (\Throwable $th) {}
 
     return response()->json([
       'message' => 'Unauthenticated',

@@ -31,14 +31,8 @@ class AuthController extends Controller
         Auth::factory()->setTTL(60 * 60 * 24 * 7 * 2);
       }
 
-      $response = [
-        'token'     => $token,
-        'expires_in' => Auth::factory()->getTTL()
-      ];
-
       activity($request->header('log-name') ?? $request->log_name)->log('Login IP: ' . $request->ip() . ' | Browser: ' . $request->userAgent());
-      return response($response, 201);
-
+      return $token;
     } else {
       return response()->json([
         'message' => __('auth.failed')
@@ -359,8 +353,6 @@ class AuthController extends Controller
     Auth::logout();
 
     activity()->log('Logout IP: ' . $request->ip() . ' | Browser: ' . $request->useragent());
-    return response()->json([
-      'success'    => true
-    ], 200);
+    return ['message' => 'Successfully logged out'];
   }
 }

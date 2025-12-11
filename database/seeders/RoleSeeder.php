@@ -12,6 +12,7 @@ class RoleSeeder extends Seeder
   public function run(): void
   {
     $this->roleSuperAdmin();
+    $this->roleAdmin();
   }
 
   private function roleSuperAdmin()
@@ -34,6 +35,17 @@ class RoleSeeder extends Seeder
       'view permission',
       'edit permission',
       'delete permission',
+    ]);
+  }
+
+  private function roleAdmin()
+  {
+    createRoleWithPermissions('Admin', [
+      'view list users',
+      'create user',
+      'view user',
+      'edit user',
+      'delete user',
     ]);
   }
 }

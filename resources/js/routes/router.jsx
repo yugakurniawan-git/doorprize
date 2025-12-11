@@ -5,6 +5,8 @@ import LoginPage from "../pages/login/Page";
 import ProtectedPage from "../pages/ProtectedPage";
 import HomePage from "../pages/home/Page";
 import UserPage from "../pages/users/Page";
+import RolePage from "../pages/roles/Page";
+import PermissionPage from "../pages/permissions/Page";
 
 const router = createHashRouter([
   {
@@ -14,7 +16,9 @@ const router = createHashRouter([
     children: [
       // All other routes that you want to protect will go inside here
       { index: true, element: <HomePage /> },
-      { path: "/users", element: <UserPage />}
+      { path: "/users", element: <UserPage />},
+      { path: "/roles", element: <RolePage />},
+      { path: "/permissions", element: <PermissionPage />}
     ],
   },
   {

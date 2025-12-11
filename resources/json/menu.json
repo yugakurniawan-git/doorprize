@@ -1,10 +1,43 @@
 [
   {
-    "name": "Users Management",
-    "url": "/users"
-  },
-  {
     "name": "Doorprizes Management",
     "url": "/doorprizes"
+  },
+  {
+    "name": "Users Management",
+    "can": [
+      "view list users",
+      "view user",
+      "view list roles",
+      "view role",
+      "view list permissions",
+      "view permission"
+    ],
+    "submenu": [
+      {
+        "name": "Users",
+        "url": "/users",
+        "can": [
+          "view list users",
+          "view user"
+        ]
+      },
+      {
+        "name": "Roles",
+        "url": "/roles",
+        "can": [
+          "view list roles",
+          "view role"
+        ]
+      },
+      {
+        "name": "Permissions",
+        "url": "/permissions",
+        "can": [
+          "view list permissions",
+          "view permission"
+        ]
+      }
+    ]
   }
 ]

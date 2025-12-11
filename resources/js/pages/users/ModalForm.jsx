@@ -53,7 +53,7 @@ function ModalForm({ openModal, isEdit, setOpenModal, user, setUser, loadData })
 	}
 
   return (
-    <Modal show={openModal} onClose={() => setOpenModal(false)} size="w-4xl">
+    <Modal show={openModal} onClose={() => setOpenModal(false)}>
       <form
         className="mb-0"
         onSubmit={(event) => handleSubmit(event)}
@@ -62,7 +62,7 @@ function ModalForm({ openModal, isEdit, setOpenModal, user, setUser, loadData })
         <Modal.Header>{isEdit ? "Edit" : "Add"} User</Modal.Header>
         <Modal.Body>
           <input type="hidden" name="id" value={user?.id || ""} />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-4">
             <TextInput
               label="Name"
               required={true}

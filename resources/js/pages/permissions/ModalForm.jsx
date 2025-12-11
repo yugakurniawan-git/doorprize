@@ -62,7 +62,7 @@ function ModalForm({ openModal, isEdit, setOpenModal, permission, setPermission,
         <Modal.Header>{isEdit ? "Edit" : "Add"} Permission</Modal.Header>
         <Modal.Body>
           <input type="hidden" name="id" value={permission?.id || ""} />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-4">
             <TextInput
               label="Name"
               required={true}

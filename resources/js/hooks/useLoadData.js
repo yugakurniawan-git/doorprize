@@ -5,7 +5,9 @@ export default function useLoadData(callback) {
   useEffect(() => {
     const channel = pusher.subscribe('load-data-channel');
     channel.bind('load-data-event', function(data) {
-      callback(data);
+      setTimeout(() => {
+        callback(data);
+      }, 1000);
     });
   }, []);
 }

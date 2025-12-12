@@ -93,7 +93,7 @@ class AuthController extends Controller
     $userUpdated['permission_names']   = $user->getAllPermissions()->pluck('name');
     return [
       'user'  => $userUpdated,
-      'token' => $request->bearerToken() ? JWTAuth::refresh($request->bearerToken()) : null,
+      'token' => JWTAuth::fromUser($user),
     ];
   }
 

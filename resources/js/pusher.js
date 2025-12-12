@@ -3,7 +3,7 @@ import Pusher from 'pusher-js';
 const pusher = new Pusher(import.meta.env.VITE_PUSHER_APP_KEY, {
   wsHost: import.meta.env.VITE_PUSHER_HOST,
   cluster: 'mt1',
-  forceTLS: false,
+  forceTLS: import.meta.env.VITE_PUSHER_ENCRYPTED === 'true',
   encrypted: true,
   disableStats: true,
   enabledTransports: [import.meta.env.VITE_PUSHER_ENCRYPTED === 'true' ? 'wss' : 'ws'],

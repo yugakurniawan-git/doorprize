@@ -13,7 +13,7 @@ export default function useAuth() {
     return user?.role_names?.includes(roleName);
   }
 
-  const handleLogin = (userData) => {
+  const setUser = (userData) => {
     dispatch(login({ user: userData }));
   };
 
@@ -21,5 +21,5 @@ export default function useAuth() {
     dispatch(logout());
   };
 
-  return { user, can, hasRole, handleLogin, handleLogout };
+  return { user, can, hasRole, setUser, handleLogout };
 };

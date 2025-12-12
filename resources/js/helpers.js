@@ -14,7 +14,7 @@ export function storage_url(url) {
 	if (!url) return null;
 	if (url.startsWith("/")) url = url.substring(1);
 	// url = encodeURIComponent(url);
-	return `/storage/${url}`;
+	return base_url(`/storage/${url}`);
 }
 
 export function api_url(url) {

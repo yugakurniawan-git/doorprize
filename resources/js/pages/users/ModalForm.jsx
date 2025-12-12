@@ -1,11 +1,11 @@
 import Modal from "../../components/elements/Modal";
-import TextInput from "../../components/elements/input/TextInput";
 import Button from "../../components/elements/Button";
 import { useState } from "react";
 import { apiServiceDelete, apiServicePost } from "../../services/api.services";
 import Swal from "sweetalert2";
 import { Toast } from "../../helpers";
 import SelectAsyncPaginate from "../../components/elements/input/SelectAsyncPaginate";
+import FormUser from "../../components/fragments/forms/FormUser";
 
 function ModalForm({ openModal, isEdit, setOpenModal, user, setUser, loadData }) {
   const [errorUser, setErrorUser] = useState({});
@@ -76,62 +76,11 @@ function ModalForm({ openModal, isEdit, setOpenModal, user, setUser, loadData })
         <Modal.Body>
           <input type="hidden" name="id" value={user?.id || ""} />
           <div className="grid grid-cols-1 gap-4">
-            <TextInput
-              label="Name"
-              required={true}
-              type="text"
-              name="name"
-              value={user?.name || ""}
-              placeholder="Enter Name"
-              onChange={(event) => {
-                setUser({
-                  ...user,
-                  name: event.target.value,
-                });
-                setErrorUser({
-                  ...errorUser,
-                  name: null,
-                });
-              }}
-              error={errorUser?.name}
-            />
-            <TextInput
-              label="Email"
-              required={true}
-              type="email"
-              name="email"
-              value={user?.email || ""}
-              placeholder="Enter Email"
-              onChange={(event) => {
-                setUser({
-                  ...user,
-                  email: event.target.value,
-                });
-                setErrorUser({
-                  ...errorUser,
-                  email: null,
-                });
-              }}
-              error={errorUser?.email}
-            />
-            <TextInput
-              label="Username"
-              required={true}
-              type="text"
-              name="username"
-              value={user?.username || ""}
-              placeholder="Enter Username"
-              onChange={(event) => {
-                setUser({
-                  ...user,
-                  username: event.target.value,
-                });
-                setErrorUser({
-                  ...errorUser,
-                  username: null,
-                });
-              }}
-              error={errorUser?.username}
+            <FormUser
+              user={user}
+              setUser={setUser}
+              errorUser={errorUser}
+              setErrorUser={setErrorUser}
             />
             <SelectAsyncPaginate
               label="Roles"

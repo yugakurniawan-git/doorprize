@@ -5,7 +5,7 @@ import { Outlet, useNavigate } from "react-router";
 import { apiService } from "../services/api.services";
 
 function ProtectedPage() {
-  const { user, handleLogin } = useAuth();
+  const { user, setUser } = useAuth();
   const [isLogin, setIsLogin] = useState(false);
   const navigate = useNavigate();
 
@@ -23,7 +23,7 @@ function ProtectedPage() {
       const response = await apiService("get", "/api/profile");
       if (response.status == 200) {
         setIsLogin(true);
-        handleLogin(response.data);
+        setUser(response.data);
         return;
       }
     }

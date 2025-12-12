@@ -84,7 +84,7 @@ services:
       - PUSHER_APP_CLUSTER=${PUSHER_APP_CLUSTER}
       - PUSHER_HOST=${PUSHER_HOST}
     ports:
-      - "${SOKETI_PORT:-6001}:6001"
+      - "${SOKETI_PORT:-6001}:5001"
       - "${SOKETI_MONITOR_PORT:-9601}:9601"
     volumes:
       - ./docker/soketi.json:/etc/soketi.json

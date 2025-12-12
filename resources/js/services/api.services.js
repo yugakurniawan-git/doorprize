@@ -40,6 +40,10 @@ export const apiService = async (method, url, options = {}) => {
     return response;
   } catch (error) {
     if (error.response) {
+      if (error.response.status == 401) {
+        localStorage.removeItem("token");
+        location.reload();
+      }
       return error.response;
     }
 

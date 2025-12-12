@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Account\User;
 use Dedoc\Scramble\Attributes\QueryParameter;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -55,16 +56,38 @@ class UserController extends Controller
       'roles.*'       => 'string|exists:roles,name',
       'permissions'   => 'sometimes|array',
       'permissions.*' => 'string|exists:permissions,name',
+      'avatar'        => 'sometimes|file|image|max:2048',
+      'remove_avatar' => 'sometimes|boolean',
     ], [], [
       'name'          => 'Name',
       'email'         => 'Email',
       'username'      => 'Username',
       'roles'         => 'Roles',
       'permissions'   => 'Permissions',
+      'avatar'        => 'Avatar',
+      'remove_avatar' => 'Remove Avatar',
     ]);
 
     if (!isset($request->id)) {
       $data['password'] = bcrypt('password');
+    }
+
+    if ($request->hasFile('avatar')) {
+      if ($request->id) {
+        $user = User::find($request->id);
+        if ($user && $user->avatar) {
+          Storage::disk('public')->delete($user->avatar);
+        }
+      }
+      $data['avatar'] = $request->file('avatar')->store('avatars', 'public');
+    } elseif (isset($data['remove_avatar']) && $data['remove_avatar']) {
+      if ($request->id) {
+        $user = User::find($request->id);
+        if ($user && $user->avatar) {
+          Storage::disk('public')->delete($user->avatar);
+        }
+      }
+      $data['avatar'] = null;
     }
 
     $user = User::updateOrCreate(['id' => $request->id], $data);

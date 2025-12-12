@@ -58,26 +58,43 @@ class AuthController extends Controller
    *
    * @return \Illuminate\Http\JsonResponse
    */
-  public function update_profile(Request $request)
+  public function updateProfile(Request $request)
   {
-    $user = User::find(Auth::user()->id)->load('country', 'marriage_status', 'region', 'religion', 'mapping_employee_user.employee.position_history.position', 'mapping_employee_user.employee.position_delegation_history.position', 'mapping_employee_user.employment_status_history', 'gender', 'students.education_background.periode_masuk', 'students.program_study.faculty', 'students.parent.pendidikan_ayah', 'students.parent.pendidikan_ibu', 'lecturer.kepegawaian.sumber_gaji', 'lecturer.data_pribadi_lain', 'lecturer.jabatan_fungsional.jabatan_fungsional', 'lecturer.pendidikan_formal.gelar_akademik', 'lecturer.pendidikan_formal.jenjang_pendidikan', 'lecturer.pendidikan_formal.bidang_studi', 'lecturer.kepangkatan.pangkat_golongan', 'lecturer.program_studies.faculty');
+    $user = User::find(Auth::user()->id);
     $data = $request->validate([
-      'name'              => ['required'],
-      'email_personal'    => ['nullable', 'email'],
-      'phone_number'      => ['nullable'],
-      'phone_number_code' => ['nullable'],
-      'address'           => ['nullable'],
+      'name'          => 'required|string|max:100',
+      'email'         => 'required|string|email|max:100|unique:users,email,' . $user->id,
+      'username'      => 'required|string|max:50|unique:users,username,' . $user->id,
+      'avatar'        => 'sometimes|file|image|max:2048',
+      'remove_avatar' => 'sometimes|boolean',
+    ], [], [
+      'name'          => 'Name',
+      'email'         => 'Email',
+      'username'      => 'Username',
+      'avatar'        => 'Avatar',
+      'remove_avatar' => 'Remove Avatar',
     ]);
-    $phone_number = preg_replace('/\D/', '', $data['phone_number']);
-    if (Str::startsWith($phone_number, '08')) {
-      $phone_number = substr($phone_number, 1);
+
+    if ($request->hasFile('avatar')) {
+      if ($user && $user->avatar) {
+        Storage::disk('public')->delete($user->avatar);
+      }
+      $data['avatar'] = $request->file('avatar')->store('avatars', 'public');
+    } elseif (isset($data['remove_avatar']) && $data['remove_avatar']) {
+      if ($user && $user->avatar) {
+        Storage::disk('public')->delete($user->avatar);
+      }
+      $data['avatar'] = null;
     }
-    $data['phone_number'] = $data['phone_number_code'] . '-' . implode('-', str_split($phone_number, 4));
+
     $user->update($data);
-    return response()->json([
-      'success'   => true,
-      'message'   => 'Profile updated successfully',
-    ], 200);
+    $userUpdated = $user->toArray();
+    $userUpdated['role_names']         = $user->roles()->pluck('name');
+    $userUpdated['permission_names']   = $user->getAllPermissions()->pluck('name');
+    return [
+      'user'  => $userUpdated,
+      'token' => $request->bearerToken() ? JWTAuth::refresh($request->bearerToken()) : null,
+    ];
   }
 
   public function notification(Request $request)

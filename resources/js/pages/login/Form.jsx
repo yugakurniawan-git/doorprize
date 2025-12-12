@@ -9,7 +9,7 @@ import { faLock, faLockOpen } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
 
 function Form() {
-  const { handleLogin } = useAuth();
+  const { setUser } = useAuth();
   const navigate = useNavigate();
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [account, setAccount] = useState(null);
@@ -23,7 +23,7 @@ function Form() {
     if (response.status == 200) {
       localStorage.setItem("token", response.data);
       const profile = await apiService("get","/api/profile");
-      handleLogin(profile);
+      setUser(profile.data);
       Toast.fire({
         icon: "success",
         title: "Login successful!",

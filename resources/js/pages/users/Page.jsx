@@ -1,7 +1,7 @@
 import PrivateLayout from "../../components/layouts/PrivateLayout";
 import { useEffect, useState } from "react";
 import Error403Page from "../errors/Error403page";
-import { no } from "../../helpers";
+import { no, storage_url } from "../../helpers";
 import TableCard from "../../components/fragments/TableCard";
 import { apiService } from "../../services/api.services";
 import Button from "../../components/elements/Button";
@@ -15,8 +15,12 @@ import useAuth from "../../hooks/useAuth";
 import Dropdown from "../../components/elements/Dropdown";
 import useWindowSize from "../../hooks/useWindowSize";
 import ModalFilter from "./ModalFilter";
+import { Link } from "react-router";
+import { Fancybox } from "@fancyapps/ui";
+import "@fancyapps/ui/dist/fancybox/fancybox.css";
 
 function Page() {
+  Fancybox.bind();
   useLoadData((data) => {
     if (data.action === 'load-data' && data.table === 'users') {
       getUsers();
@@ -107,45 +111,65 @@ function Page() {
           <TableCard.Thead>
             <tr>
               <TableCard.Th className="text-start">No</TableCard.Th>
-              <TableCard.Th className="text-start" sortBy="name">Name</TableCard.Th>
-              <TableCard.Th className="text-start" sortBy="email">Email</TableCard.Th>
-              <TableCard.Th className="text-start" sortBy="username">Username</TableCard.Th>
+              <TableCard.Th className="text-start" sortBy="name">User</TableCard.Th>
               <TableCard.Th className="text-start" sortBy="roles->name">Roles</TableCard.Th>
               <TableCard.Th className="text-start" sortBy="created_at">Created At</TableCard.Th>
             </tr>
           </TableCard.Thead>
           <TableCard.Tbody>
-            {isLoading ? <TableCard.Loading totalColumns={6} /> : users?.data?.length > 0 ? (
+            {isLoading ? <TableCard.Loading totalColumns={4} /> : users?.data?.length > 0 ? (
               users?.data?.map((item, index) => (
                 <TableCard.Tr
                   key={item.id}
                   className={can("create user") ? "cursor-pointer" : ""}
-                  onClick={() => {
-                    if (can("create user")) {
-                      if (item.special_permissions.length > 0) {
-                        const updatedUser = {...item};
-                        updatedUser.permissions = item.special_permissions.map(item => ({
-                          id: item.id,
-                          name: item.name,
-                        }));
-                        delete updatedUser.special_permissions;
-                        setUser({...updatedUser});
-                      } else {
-                        setUser({...item});
-                      }
-                      setOpenModal((prev) => ({...prev, form: true}));
+                  onClick={(e) => {
+                    if (e.target.closest("[data-fancybox]")) return;
+                    if (!can("create user")) return;
+                    if (item.special_permissions.length > 0) {
+                      const updatedUser = {...item};
+                      updatedUser.permissions = item.special_permissions.map(item => ({
+                        id: item.id,
+                        name: item.name,
+                      }));
+                      delete updatedUser.special_permissions;
+                      setUser({...updatedUser});
+                    } else {
+                      setUser({...item});
                     }
+                    setOpenModal((prev) => ({...prev, form: true}));
                   }}
                 >
                   <TableCard.Td>{no(users, index + 1)}</TableCard.Td>
-                  <TableCard.Td>{item.name}</TableCard.Td>
-                  <TableCard.Td>{item.email}</TableCard.Td>
-                  <TableCard.Td>{item.username}</TableCard.Td>
+                  <TableCard.Td>
+                    <div className="flex gap-3 items-center">
+                      <a
+                        data-fancybox="gallery-avatar"
+                        href={storage_url(item.avatar || "/noavatar.png")}
+                        data-caption={item.name}
+                        className="w-10 hover:opacity-80"
+                      >
+                        <img
+                          src={storage_url(item.avatar || "/noavatar.png")}
+                          alt="avatar"
+                          className="size-10 rounded-full object-cover"
+                        />
+                      </a>
+                      <div className="w-72">
+                        <span>{item.name}</span>
+                        <br />
+                        <span className="text-xs text-slate-500 whitespace-break-spaces">
+                          {item.username}
+                          <br />
+                          {item.email}
+                        </span>
+                      </div>
+                    </div>
+                  </TableCard.Td>
                   <TableCard.Td>{item.roles?.map(role => role.name).join(', ')}</TableCard.Td>
                   <TableCard.Td>{moment(item.created_at).format('lll')}</TableCard.Td>
                 </TableCard.Tr>
               ))
-            ) : <TableCard.Empty totalColumns={6} />}
+            ) : <TableCard.Empty totalColumns={4} />}
           </TableCard.Tbody>
         </TableCard.Table>
       </TableCard>

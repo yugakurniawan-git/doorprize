@@ -132,6 +132,26 @@ function ModalForm({ openModal, isEdit, setOpenModal, user, setUser, loadData })
               menuPortalTarget={document.body}
               styles={{ menuPortal: (base) => ({ ...base, zIndex: 999999 }) }}
             />
+            {isEdit && (
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  id="reset_password"
+                  name="reset_password"
+                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                  onChange={(e) => {
+                    setUser((prev) => ({
+                      ...prev,
+                      reset_password: e.target.checked,
+                    }));
+                  }}
+                  checked={user?.reset_password || false}
+                />
+                <label htmlFor="reset_password" className="ms-2 text-sm font-medium text-gray-900">
+                  Do you want to reset password?
+                </label>
+              </div>
+            )}
           </div>
         </Modal.Body>
         <Modal.Footer className={`flex justify-between items-center gap-2`}>

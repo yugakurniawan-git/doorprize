@@ -12,7 +12,8 @@ Route::middleware('api_key')->group(function () {
     // Account
     Route::get('/profile', [AuthController::class, 'profile'])->name('profile');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-    Route::post('/profile', [AuthController::class, 'updateProfile'])->name('updateProfile');
+    Route::post('/profile', [AuthController::class, 'updateProfile'])->name('profile.update');
+    Route::put('/password', [AuthController::class, 'changePassword'])->name('password.update');
 
     // Users
     Route::get('/users', [UserController::class, 'index'])->middleware('can:view list users');

@@ -28,7 +28,7 @@ function ModalEditProfile({ openModal, setOpenModal }) {
         icon: 'success',
         title: 'Profile updated successfully'
       });
-      setOpenModal(false);
+      setOpenModal(prev => ({...prev, editProfile: false}));
       setUser(response.data.user);
       localStorage.setItem("token", response.data.token);
     } else {
@@ -37,7 +37,7 @@ function ModalEditProfile({ openModal, setOpenModal }) {
   }
 
   return (
-    <Modal show={openModal} onClose={() => setOpenModal(false)}>
+    <Modal show={openModal} onClose={() => setOpenModal(prev => ({...prev, editProfile: false}))}>
       <form onSubmit={(event) => handleSubmit(event)} encType="multipart/form-data" className="mb-0">
         <Modal.Header>Edit Profile</Modal.Header>
         <Modal.Body>
@@ -52,7 +52,7 @@ function ModalEditProfile({ openModal, setOpenModal }) {
         </Modal.Body>
         <Modal.Footer>
           <div className="flex gap-2 ms-auto">
-            <Button type="button" bg="bg-gray-500" onClick={() => setOpenModal(false)}>Cancel</Button>
+            <Button type="button" bg="bg-gray-500" onClick={() => setOpenModal(prev => ({...prev, editProfile: false}))}>Cancel</Button>
             <Button type="submit">Submit</Button>
           </div>
         </Modal.Footer>

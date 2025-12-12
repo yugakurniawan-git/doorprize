@@ -58,6 +58,7 @@ class UserController extends Controller
       'permissions.*' => 'string|exists:permissions,name',
       'avatar'        => 'sometimes|file|image|max:2048',
       'remove_avatar' => 'sometimes|boolean',
+      'reset_password'=> 'sometimes|boolean',
     ], [], [
       'name'          => 'Name',
       'email'         => 'Email',
@@ -68,7 +69,7 @@ class UserController extends Controller
       'remove_avatar' => 'Remove Avatar',
     ]);
 
-    if (!isset($request->id)) {
+    if (!isset($request->id) || (isset($data['reset_password']) && $data['reset_password'])) {
       $data['password'] = bcrypt('password');
     }
 

@@ -213,47 +213,32 @@ class AuthController extends Controller
     }
   }
 
-  public function change_password(Request $request)
+  public function changePassword(Request $request)
   {
     $request->validate([
-      'old_password'  => ['required'],
-      'password'      => ['required', 'min:8', 'confirmed'],
+      'current_password'  => ['required'],
+      'password'          => ['required', 'min:8', 'confirmed'],
     ]);
 
-    if ($request->old_password == $request->password) {
+    if ($request->current_password == $request->password) {
       return response()->json([
         'success'    => false,
-        'message'    => 'Old password and new password cannot be the same'
+        'message'    => 'Current password and new password cannot be the same'
       ], 422);
     }
 
     $user = User::find(Auth::user()->id);
-    if (Hash::check($request->old_password, $user->password)) {
+    if (Hash::check($request->current_password, $user->password)) {
       $user->update([
         'password'  => Hash::make($request->password),
-        'password2' => hash('sha512', $request->password)
       ]);
 
-      $response = Http::withoutVerifying()->post(config('app_link.ldap_url') . '/change-password', [
-        'username'  => $user->username,
-        'password'  => $request->password
-      ]);
-
-      if (!$response->ok()) {
-        Log::error("change password active directory failed. " . $response->body());
-      }
-
-      dispatch(new NotificationWhatsAppJob($user->phone_number, 'Your password has been successfully reset. If you did not perform this action, please contact support immediately.'));
-      activity()->log('Change Password IP: ' . $request->ip() . ' | Browser: ' . $request->useragent());
-      return response()->json([
-        'success'    => true,
-        'message'    => 'Password changed successfully'
-      ], 200);
+      activity()->log('Change Password IP: ' . $request->ip() . ' | Browser: ' . $request->userAgent());
+      return JWTAuth::fromUser($user);
     }
 
     return response()->json([
-      'success'    => false,
-      'message'    => 'Old password not match'
+      'message'    => 'Current password not match'
     ], 422);
   }
 

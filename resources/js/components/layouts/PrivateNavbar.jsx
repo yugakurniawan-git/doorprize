@@ -14,6 +14,7 @@ import useAuth from "../../hooks/useAuth";
 import { apiService } from "../../services/api.services";
 import ModalEditProfile from "../fragments/ModalEditProfile";
 import { useState } from "react";
+import ModalChangePassword from "../fragments/ModalChangePassword";
 
 export function filterMenusByPermission(menus, userPermissions) {
   return menus
@@ -56,7 +57,10 @@ export function filterMenusByPermission(menus, userPermissions) {
 function PrivateNavbar({ setShowNavbar }) {
   const { user } = useAuth();
   const filteredMenus = filterMenusByPermission(menu, user.permission_names);
-  const [openModal, setOpenModal] = useState(false);
+  const [openModal, setOpenModal] = useState({
+    editProfile: false,
+    changePassword: false,
+  });
 
   const logout = async (e) => {
     e.preventDefault();
@@ -122,13 +126,13 @@ function PrivateNavbar({ setShowNavbar }) {
                     <p className="text-sm text-rise">{user?.email} </p>
                   </div>
                 </Dropdown.Custom>
-                <Dropdown.Item onClick={() => setOpenModal(true)}>
+                <Dropdown.Item onClick={() => setOpenModal(prev => ({...prev, editProfile: true}))}>
                   <div className="flex flex-row justify-start items-center gap-2">
                     <FontAwesomeIcon icon={faUserEdit} />
                     <span className="text-sm text-black">Edit Profile</span>
                   </div>
                 </Dropdown.Item>
-                <Dropdown.Item onClick={() => {}}>
+                <Dropdown.Item onClick={() => setOpenModal(prev => ({...prev, changePassword: true}))}>
                   <div className="flex flex-row justify-start items-center gap-2">
                     <FontAwesomeIcon icon={faLock} />
                     <span className="text-sm text-black">Change Password</span>
@@ -147,7 +151,12 @@ function PrivateNavbar({ setShowNavbar }) {
       </div>
 
       <ModalEditProfile
-        openModal={openModal}
+        openModal={openModal.editProfile}
+        setOpenModal={setOpenModal}
+      />
+
+      <ModalChangePassword
+        openModal={openModal.changePassword}
         setOpenModal={setOpenModal}
       />
     </>

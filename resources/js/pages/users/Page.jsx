@@ -97,7 +97,10 @@ function Page() {
             }
           >
             {can("create user") && (
-              <Dropdown.Item onClick={() => setOpenModal((prev) => ({...prev, form: true}))}>
+              <Dropdown.Item onClick={() => {
+                setOpenModal((prev) => ({...prev, form: true}));
+                setUser(null);
+              }}>
                 <FontAwesomeIcon className="me-1" icon={faPlus} /> Add
               </Dropdown.Item>
             )}

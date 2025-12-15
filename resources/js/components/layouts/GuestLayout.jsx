@@ -11,12 +11,12 @@ function GuestLayout({ children, greeting }) {
   return (
     <div className="flex flex-col lg:flex-row">
       <div className="hidden lg:flex lg:items-center lg:justify-center bg-[url('/images/background/product-bg.jpg')] bg-cover bg-no-repeat bg-center p-8 lg:w-4/6">
-        <img src="/images/background/home-our-contact.png" alt="Welcome Image" className="self-center" />
+        <img src="/logo/logo.png" alt="Welcome Image" className="self-center w-96" />
       </div>
       <div className="w-full lg:w-2/6">
         <div className="min-h-screen flex flex-col justify-center items-center pt-6 sm:pt-0">
           <a href="/">
-            <img src="/logo/128x128.png" alt="logo" className="" />
+            <img src="/logo/logo-kenji.png" alt="logo" className="w-96" />
           </a>
           <div className="my-8 text-center">
             { greeting }

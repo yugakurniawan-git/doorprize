@@ -19,12 +19,12 @@ export function storage_url(url) {
 
 export function api_url(url) {
 	if (url.startsWith("/")) url = url.substring(1);
-  return `${import.meta.env.VITE_API_URL}/${url}`;
+  return `${import.meta.env.VITE_API_URL || window.location.origin}/${url}`;
 }
 
 export function base_url(url) {
 	if (url.startsWith("/")) url = url.substring(1);
-	return `${import.meta.env.VITE_BASE_URL}/${url}`;
+	return `${import.meta.env.VITE_BASE_URL || window.location.origin}/${url}`;
 }
 
 export function no(response, iteration) {

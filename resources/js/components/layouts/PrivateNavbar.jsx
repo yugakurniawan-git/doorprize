@@ -20,10 +20,10 @@ export function filterMenusByPermission(menus, userPermissions) {
   return menus
     .map((menu) => {
       // normalisasi permission (bisa string atau array)
-      const required = Array.isArray(menu.permission)
-        ? menu.permission
-        : menu.permission
-        ? [menu.permission]
+      const required = Array.isArray(menu.can)
+        ? menu.can
+        : menu.can
+        ? [menu.can]
         : [];
 
       // cek apakah user punya salah satu permission

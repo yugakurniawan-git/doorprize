@@ -46,7 +46,7 @@ class AuthController extends Controller
    */
   public function profile(Request $request)
   {
-    $user = User::find(Auth::user()->id);
+    $user = User::select('id', 'name', 'email', 'username', 'avatar')->find(Auth::user()->id);
     $data = $user->toArray();
     $data['role_names']         = $user->roles()->pluck('name');
     $data['permission_names']   = $user->getAllPermissions()->pluck('name');

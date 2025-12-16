@@ -3,11 +3,12 @@
 namespace App\Models\Doorprize;
 
 use App\Models\BaseModel;
+use App\Models\CustomSoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 
 class DoorprizeImage extends Model
 {
-  use BaseModel;
+  use BaseModel, CustomSoftDeletes;
 
   protected $table    = 'doorprize_images';
   protected $fillable = [

@@ -3,11 +3,12 @@
 namespace App\Models\Doorprize;
 
 use App\Models\BaseModel;
+use App\Models\CustomSoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 
 class Winner extends Model
 {
-  use BaseModel;
+  use BaseModel, CustomSoftDeletes;
 
   protected $table    = 'winners';
   protected $fillable = [

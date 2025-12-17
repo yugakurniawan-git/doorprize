@@ -1,13 +1,18 @@
 import { Link, useNavigate } from "react-router";
+import { useEffect } from "react";
 import useAuth from "../../hooks/useAuth";
 
 function GuestLayout({ children, greeting }) {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
-  if (user || token) {
-    return navigate('/');
-  }
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (user || token) {
+      navigate('/');
+    }
+  }, [user, navigate]);
+
   return (
     <div className="flex flex-col lg:flex-row">
       <div className="hidden lg:flex lg:items-center lg:justify-center bg-[url('/images/background/product-bg.jpg')] bg-cover bg-no-repeat bg-center p-8 lg:w-4/6">

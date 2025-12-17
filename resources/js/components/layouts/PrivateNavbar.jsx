@@ -89,7 +89,7 @@ function PrivateNavbar({ setShowNavbar }) {
             </div>
             <div className="flex w-44 sm:w-32 lg:w-44 h-auto items-center justify-center md:justify-start">
               <Link to={`/`}>
-                <img src="/logo/72x72.png" alt="Logo" className="w-14" />
+                <img src="/logo/logo-kenji.png" alt="Logo" className="w-24" />
               </Link>
             </div>
             <div className="hidden lg:flex sm:w-1/2 lg:w-[65vw] sm:justify-center sm:items-center">

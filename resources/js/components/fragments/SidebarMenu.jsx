@@ -17,7 +17,7 @@ function SidebarMenu() {
     <div className="flex min-h-screen flex-col justify-between border-e border-gray-100 bg-white">
       <div className="px-4 py-6">
         <div className="flex justify-center items-center px-4">
-          <img src="/logo/Logo-Mahaghora-footer-300.png" alt="Logo" className="h-12" />
+          <img src="/logo/logo-kenji.png" alt="Logo" className="h-12" />
         </div>
 
         <ul className="mt-6">

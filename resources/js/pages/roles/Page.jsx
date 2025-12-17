@@ -9,16 +9,16 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import useUrlParams from "../../hooks/useUrlParams";
 import ModalForm from "./ModalForm";
-import useLoadData from "../../hooks/useLoadData";
+// import useLoadData from "../../hooks/useLoadData";
 import moment from "moment";
 import useAuth from "../../hooks/useAuth";
 
 function Page() {
-  useLoadData((data) => {
-    if (data.action === 'load-data' && data.table === 'roles') {
-      getRoles();
-    }
-  });
+  // useLoadData((data) => {
+  //   if (data.action === 'load-data' && data.table === 'roles') {
+  //     getRoles();
+  //   }
+  // });
   const [params, setParams] = useUrlParams();
   const { can } = useAuth();
   if (!can("view list roles")) {

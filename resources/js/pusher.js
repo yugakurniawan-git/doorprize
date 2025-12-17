@@ -1,9 +1,5 @@
 import Pusher from 'pusher-js';
 
-if (!import.meta.env.VITE_PUSHER_APP_KEY) {
-  console.warn('Pusher app key is not set. Real-time features will be disabled.');
-}
-
 const pusher = new Pusher(import.meta.env.VITE_PUSHER_APP_KEY, {
   wsHost: import.meta.env.VITE_PUSHER_HOST,
   cluster: 'mt1',

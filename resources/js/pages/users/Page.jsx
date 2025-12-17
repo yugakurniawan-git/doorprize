@@ -4,28 +4,26 @@ import Error403Page from "../errors/Error403page";
 import { no, storage_url } from "../../helpers";
 import TableCard from "../../components/fragments/TableCard";
 import { apiService } from "../../services/api.services";
-import Button from "../../components/elements/Button";
 import { faBars, faFilter, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import useUrlParams from "../../hooks/useUrlParams";
 import ModalForm from "./ModalForm";
-import useLoadData from "../../hooks/useLoadData";
+// import useLoadData from "../../hooks/useLoadData";
 import moment from "moment";
 import useAuth from "../../hooks/useAuth";
 import Dropdown from "../../components/elements/Dropdown";
 import useWindowSize from "../../hooks/useWindowSize";
 import ModalFilter from "./ModalFilter";
-import { Link } from "react-router";
 import { Fancybox } from "@fancyapps/ui";
 import "@fancyapps/ui/dist/fancybox/fancybox.css";
 
 function Page() {
   Fancybox.bind();
-  useLoadData((data) => {
-    if (data.action === 'load-data' && data.table === 'users') {
-      getUsers();
-    }
-  });
+  // useLoadData((data) => {
+  //   if (data.action === 'load-data' && data.table === 'users') {
+  //     getUsers();
+  //   }
+  // });
   const [params, setParams] = useUrlParams();
   const { width } = useWindowSize();
   const { can } = useAuth();

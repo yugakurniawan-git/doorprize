@@ -53,12 +53,12 @@ class DoorprizeController extends Controller
       'description'   => 'sometimes|string',
       'images'        => 'sometimes|array',
       'images.*'      => 'file|image|max:1024',
-      'quota'         => 'sometimes|integer|min:1',
+      'winners_quota' => 'sometimes|integer|min:1',
     ], [], [
-      'name'        => 'Name',
-      'description' => 'Description',
-      'images'      => 'Images',
-      'quota'       => 'Quota',
+      'name'          => 'Name',
+      'description'   => 'Description',
+      'images'        => 'Images',
+      'winners_quota' => 'Winners Quota',
     ]);
 
     $doorprize = Doorprize::updateOrCreate(['id' => $request->id], $data);
@@ -72,8 +72,8 @@ class DoorprizeController extends Controller
       }
     }
 
-    if (isset($data['quota'])) {
-      $doorprize->adjustWinnersQuota($data['quota']);
+    if (isset($data['winners_quota'])) {
+      $doorprize->adjustWinnersQuota($data['winners_quota']);
     }
 
     return $doorprize->load('images');
@@ -103,6 +103,8 @@ class DoorprizeController extends Controller
    */
   public function destroy(Doorprize $doorprize)
   {
+    $doorprize->winners()->delete();
+    $doorprize->images()->delete();
     $doorprize->delete();
     return ['message' => 'Doorprize deleted successfully.'];
   }

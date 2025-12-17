@@ -15,23 +15,23 @@ import useAuth from "../../hooks/useAuth";
 
 function Page() {
   // useLoadData((data) => {
-  //   if (data.action === 'load-data' && data.table === 'roles') {
-  //     getRoles();
+  //   if (data.action === 'load-data' && data.table === 'doorprizes') {
+  //     getDoorprizes();
   //   }
   // });
   const [params, setParams] = useUrlParams();
   const { can } = useAuth();
-  if (!can("view list roles")) {
+  if (!can("view list doorprizes")) {
     return <Error403Page />;
   }
 
-  const [roles, setRoles] = useState({});
-  const [role, setRole] = useState({});
+  const [doorprizes, setDoorprizes] = useState({});
+  const [doorprize, setDoorprize] = useState({});
 	const [isLoading, setIsLoading] = useState(true);
 	const [openModal, setOpenModal] = useState(false);
 
   useEffect(() => {
-    document.title = "Doorprize - Roles Management";
+    document.title = "Doorprize - Doorprizes Management";
     setParams((prev) => ({
       ...prev,
       sort_by: params.sort_by || "created_at",
@@ -40,7 +40,7 @@ function Page() {
   }, []);
 
 	useEffect(() => {
-		getRoles(true);
+		getDoorprizes(true);
 	}, [
     params.sort_by,
     params.sort_type,
@@ -49,32 +49,29 @@ function Page() {
     params.q,
   ]);
 
-	async function getRoles(loading = false) {
+	async function getDoorprizes(loading = false) {
 		setIsLoading(loading);
-		const response = await apiService("GET", "/api/roles", {
+		const response = await apiService("GET", "/api/doorprizes", {
 			params: {
-        include: [
-          "permissions:id,name"
-        ],
 				...params,
 			},
 		});
-    setRoles(response.data);
+    setDoorprizes(response.data);
     setIsLoading(false);
 	}
 
   return (
     <PrivateLayout>
       <TableCard
-        title="Roles Management"
-        response={roles}
+        title="Doorprizes Management"
+        response={doorprizes}
         setParams={setParams}
         params={params}
         isLoading={isLoading}
         setIsLoading={setIsLoading}
         action={(
-          <Button data-tooltip-id="tooltip" data-tooltip-content="Add Role" onClick={() => {
-            setRole({});
+          <Button data-tooltip-id="tooltip" data-tooltip-content="Add Doorprize" onClick={() => {
+            setDoorprize({});
             setOpenModal(true);
           }}>
             <div className="flex flex-row justify-center items-center gap-2">
@@ -88,38 +85,44 @@ function Page() {
             <tr>
               <TableCard.Th className="text-start">No</TableCard.Th>
               <TableCard.Th className="text-start" sortBy="name">Name</TableCard.Th>
+              <TableCard.Th className="text-start" sortBy="winners_quota">Winners Quota</TableCard.Th>
+              <TableCard.Th className="text-start" sortBy="total_winners">Total Winners</TableCard.Th>
+              <TableCard.Th className="text-start" sortBy="description">Description</TableCard.Th>
               <TableCard.Th className="text-start" sortBy="created_at">Created At</TableCard.Th>
             </tr>
           </TableCard.Thead>
           <TableCard.Tbody>
-            {isLoading ? <TableCard.Loading totalColumns={3} /> : roles?.data?.length > 0 ? (
-              roles?.data?.map((item, index) => (
+            {isLoading ? <TableCard.Loading totalColumns={6} /> : doorprizes?.data?.length > 0 ? (
+              doorprizes?.data?.map((item, index) => (
                 <TableCard.Tr
                   key={item.id}
-                  className={can("create role") ? "cursor-pointer" : ""}
+                  className={can("create doorprize") ? "cursor-pointer" : ""}
                   onClick={() => {
-                    if (can("create role")) {
-                      setRole(item);
+                    if (can("create doorprize")) {
+                      setDoorprize(item);
                       setOpenModal(true);
                     }
                   }}
                 >
-                  <TableCard.Td>{no(roles, index + 1)}</TableCard.Td>
+                  <TableCard.Td>{no(doorprizes, index + 1)}</TableCard.Td>
                   <TableCard.Td>{item.name}</TableCard.Td>
+                  <TableCard.Td>{item.winners_quota}</TableCard.Td>
+                  <TableCard.Td>{item.total_winners}</TableCard.Td>
+                  <TableCard.Td>{item.description}</TableCard.Td>
                   <TableCard.Td>{moment(item.created_at).format('lll')}</TableCard.Td>
                 </TableCard.Tr>
               ))
-            ) : <TableCard.Empty totalColumns={3} />}
+            ) : <TableCard.Empty totalColumns={6} />}
           </TableCard.Tbody>
         </TableCard.Table>
       </TableCard>
       <ModalForm
         openModal={openModal}
-        isEdit={role?.id ? true : false}
+        isEdit={doorprize?.id ? true : false}
         setOpenModal={setOpenModal}
-        role={role}
-        setRole={setRole}
-        loadData={getRoles}
+        doorprize={doorprize}
+        setDoorprize={setDoorprize}
+        loadData={getDoorprizes}
       />
     </PrivateLayout>
   );

@@ -10,13 +10,20 @@ class Doorprize extends Model
 {
   use BaseModel, CustomSoftDeletes;
 
-  protected $table    = 'doorprizes';
-  protected $fillable = [
+  protected $table      = 'doorprizes';
+  public $incrementing  = false;
+  protected $keyType    = 'string';
+  protected $fillable   = [
     'name',
     'description',
     'created_by',
     'updated_by',
     'deleted_by',
+  ];
+
+  public $appends = [
+    'total_winners',
+    'winners_quota',
   ];
 
   public function images()
@@ -36,8 +43,9 @@ class Doorprize extends Model
     if ($newQuota > $currentWinnersCount) {
       $toAdd = $newQuota - $currentWinnersCount;
       for ($i = 0; $i < $toAdd; $i++) {
+        $code = strtoupper(substr(str_shuffle('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, 4) . '-' . substr(str_shuffle('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, 4) . '-' . substr(str_shuffle('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, 4));
         $this->winners()->create([
-          'code' => uniqid('WIN-'),
+          'code' => $code,
         ]);
       }
     } elseif ($newQuota < $currentWinnersCount) {
@@ -47,5 +55,15 @@ class Doorprize extends Model
         $winner->delete();
       }
     }
+  }
+
+  public function getTotalWinnersAttribute()
+  {
+    return $this->winners()->whereNotNull('claimed_at')->count();
+  }
+
+  public function getWinnersQuotaAttribute()
+  {
+    return $this->winners()->count();
   }
 }

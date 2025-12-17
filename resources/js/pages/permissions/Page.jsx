@@ -70,7 +70,7 @@ function Page() {
         isLoading={isLoading}
         setIsLoading={setIsLoading}
         action={(
-          <Button data-tooltip-id="tooltip" data-tooltip-content="Add Academic Calendar" onClick={() => {
+          <Button data-tooltip-id="tooltip" data-tooltip-content="Add Permission" onClick={() => {
             setPermission({});
             setOpenModal(true);
           }}>
@@ -89,7 +89,7 @@ function Page() {
             </tr>
           </TableCard.Thead>
           <TableCard.Tbody>
-            {isLoading ? <TableCard.Loading totalColumns={5} /> : permissions?.data?.length > 0 ? (
+            {isLoading ? <TableCard.Loading totalColumns={3} /> : permissions?.data?.length > 0 ? (
               permissions?.data?.map((item, index) => (
                 <TableCard.Tr
                   key={item.id}
@@ -106,7 +106,7 @@ function Page() {
                   <TableCard.Td>{moment(item.created_at).format('lll')}</TableCard.Td>
                 </TableCard.Tr>
               ))
-            ) : <TableCard.Empty totalColumns={5} />}
+            ) : <TableCard.Empty totalColumns={3} />}
           </TableCard.Tbody>
         </TableCard.Table>
       </TableCard>

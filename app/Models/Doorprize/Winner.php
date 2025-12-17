@@ -10,8 +10,10 @@ class Winner extends Model
 {
   use BaseModel, CustomSoftDeletes;
 
-  protected $table    = 'winners';
-  protected $fillable = [
+  protected $table      = 'winners';
+  public $incrementing  = false;
+  protected $keyType    = 'string';
+  protected $fillable   = [
     'doorprize_id',
     'name',
     'email',

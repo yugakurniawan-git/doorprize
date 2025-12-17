@@ -7,6 +7,8 @@ import HomePage from "../pages/home/Page";
 import UserPage from "../pages/users/Page";
 import RolePage from "../pages/roles/Page";
 import PermissionPage from "../pages/permissions/Page";
+import DoorprizePage from "../pages/doorprizes/Page";
+import WinnerPage from "../pages/winners/Page";
 
 const router = createHashRouter([
   {
@@ -18,7 +20,9 @@ const router = createHashRouter([
       { index: true, element: <HomePage /> },
       { path: "/users", element: <UserPage />},
       { path: "/roles", element: <RolePage />},
-      { path: "/permissions", element: <PermissionPage />}
+      { path: "/permissions", element: <PermissionPage />},
+      { path: "/doorprizes", element: <DoorprizePage />},
+      { path: "/winners", element: <WinnerPage />}
     ],
   },
   {

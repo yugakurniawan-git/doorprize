@@ -12,15 +12,15 @@ return new class extends Migration
   public function up(): void
   {
     Schema::create('winners', function (Blueprint $table) {
-      $table->id();
+      $table->uuid('id')->primary();
       $table->uuid('doorprize_id');
       $table->foreign('doorprize_id')->references('id')->on('doorprizes')->onDelete('cascade');
-      $table->string('name');
+      $table->string('code')->unique();
+      $table->string('name')->nullable();
       $table->string('email')->nullable();
       $table->string('phone')->nullable();
       $table->text('address')->nullable();
       $table->timestamp('claimed_at')->nullable();
-      $table->string('code')->unique();
       $table->timestamps();
       $table->softDeletes();
       $table->uuid('created_by')->nullable();

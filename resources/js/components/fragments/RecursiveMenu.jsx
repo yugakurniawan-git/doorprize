@@ -1,11 +1,13 @@
 import { faChevronRight, faEllipsis } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router";
 import useWindowSize from "../../hooks/useWindowSize";
+import { DarkModeContext } from "../../context/DarkMode";
 
 const RecursiveMenu = ({ menus }) => {
   const windowSize = useWindowSize();
+  const { isDarkMode } = useContext(DarkModeContext);
   const [shownMenu, setShownMenu] = useState([]);
   const [hiddenMenu, setHiddenMenu] = useState([]);
   const [openMore, setOpenMore] = useState(false);
@@ -52,7 +54,7 @@ const RecursiveMenu = ({ menus }) => {
               onMouseEnter={() => setOpenMore(true)}
               onMouseLeave={() => setOpenMore(false)}
               className={`
-                absolute z-50 right-0 min-w-[180px] h-auto bg-white text-black shadow-lg
+                absolute z-50 right-0 min-w-[180px] h-auto ${isDarkMode ? "bg-gray-800 text-white" : "bg-white text-black"} shadow-lg
                 transition-all duration-200 ease-in-out
                 ${ openMore ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none" }
               `}
@@ -75,6 +77,7 @@ const RecursiveMenu = ({ menus }) => {
 
 const MenuItem = ({ menu, rounded, isMoreMenu = false }) => {
   const [open, setOpen] = useState(false);
+  const { isDarkMode } = useContext(DarkModeContext);
 
   // kalau ada submenu → dropdown
   if (menu.submenu && menu.submenu.length > 0) {
@@ -98,7 +101,7 @@ const MenuItem = ({ menu, rounded, isMoreMenu = false }) => {
           onMouseEnter={() => setOpen(true)}
           onMouseLeave={() => setOpen(false)}
           className={`
-            absolute z-50 min-w-[180px] h-auto bg-white text-black shadow-lg
+            absolute z-50 min-w-[180px] h-auto ${isDarkMode ? "bg-gray-800 text-white" : "bg-white text-black"} shadow-lg
             transition-all duration-200 ease-in-out
             ${ open ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none" }
             ${ isMoreMenu ? "top-0 right-45" : "left-0" }
@@ -127,6 +130,7 @@ const MenuItem = ({ menu, rounded, isMoreMenu = false }) => {
 
 const SubMenuItem = ({ menu }) => {
   const [open, setOpen] = useState(false);
+  const { isDarkMode } = useContext(DarkModeContext);
 
   // kalau ada submenu → dropdown
   if (menu.submenu && menu.submenu.length > 0) {
@@ -136,7 +140,7 @@ const SubMenuItem = ({ menu }) => {
         <button
           onMouseEnter={() => setOpen(true)}
           onMouseLeave={() => setOpen(false)}
-          className={`w-full text-left px-3 py-2 hover:bg-gray-200 flex items-center justify-between gap-2`}
+          className={`w-full text-left px-3 py-2 ${isDarkMode ? "hover:bg-gray-700" : "hover:bg-gray-200"} flex items-center justify-between gap-2`}
         >
           {menu.name}
           <FontAwesomeIcon icon={faChevronRight} size="xs"
@@ -149,7 +153,7 @@ const SubMenuItem = ({ menu }) => {
           onMouseEnter={() => setOpen(true)}
           onMouseLeave={() => setOpen(false)}
           className={`
-            absolute left-full top-0 mt-0 min-w-[180px] bg-white text-black shadow-lg z-50
+            absolute left-full top-0 mt-0 min-w-[180px] ${isDarkMode ? "bg-gray-800 text-white" : "bg-white text-black"} shadow-lg z-50
             transition-all duration-200 ease-in-out
             ${ open ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none" }
           `}
@@ -166,7 +170,7 @@ const SubMenuItem = ({ menu }) => {
 
   // kalau tidak ada submenu → link biasa
   return (
-    <Link to={menu.url} className="block px-3 py-2 hover:bg-gray-200">
+    <Link to={menu.url} className={`block px-3 py-2 ${isDarkMode ? "hover:bg-gray-700" : "hover:bg-gray-200"}`}>
       {menu.name}
     </Link>
   );

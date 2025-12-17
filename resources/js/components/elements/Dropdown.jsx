@@ -1,7 +1,8 @@
 import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import Button from "./Button";
+import { DarkModeContext } from "../../context/DarkMode";
 
 const Dropdown = ({
   label = "Menu",
@@ -11,6 +12,7 @@ const Dropdown = ({
   isCustomize = false,
   ...props
 }) => {
+  const { isDarkMode } = useContext(DarkModeContext);
   const [open, setOpen] = useState(false);
   const menuRef = useRef(null);
 
@@ -46,9 +48,9 @@ const Dropdown = ({
       )}
       {open && (
         <div
-          className={`absolute z-15 mt-2 min-w-72 max-w-80 rounded-md bg-white shadow-lg ${alignClass}`}
+          className={`absolute z-15 mt-2 min-w-72 max-w-80 rounded-md ${isDarkMode ? "bg-gray-800 text-white" : "bg-white text-black"} shadow-lg ${alignClass}`}
         >
-          <ul className="py-1">
+          <ul className="">
             {React.Children.map(children, (child) => {
               if (!React.isValidElement(child)) return child;
               return React.cloneElement(child, {
@@ -66,16 +68,19 @@ const Dropdown = ({
 };
 
 // Subkomponen item
-Dropdown.Item = ({ children, className = "", ...props }) => (
-  <li>
-    <button
-      {...props}
-      className={`block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 ${className} cursor-pointer`}
-    >
-      {children}
-    </button>
-  </li>
-);
+Dropdown.Item = ({ children, className = "", ...props }) => {
+  const { isDarkMode } = useContext(DarkModeContext);
+  return (
+    <li>
+      <button
+        {...props}
+        className={`block w-full px-4 py-2 text-left text-sm ${isDarkMode ? "hover:bg-gray-700 text-white" : "hover:bg-gray-100 text-black"} ${className} cursor-pointer`}
+      >
+        {children}
+      </button>
+    </li>
+  );
+};
 
 // Divider
 Dropdown.Divider = () => (
@@ -85,13 +90,16 @@ Dropdown.Divider = () => (
 );
 
 // Header
-Dropdown.Header = ({ children }) => (
-  <li>
-    <span className="block px-4 py-2 text-sm font-semibold text-gray-500">
-      {children}
-    </span>
-  </li>
-);
+Dropdown.Header = ({ children }) => {
+  const { isDarkMode } = useContext(DarkModeContext);
+  return (
+    <li>
+      <span className={`block px-4 py-2 text-sm font-semibold ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>
+        {children}
+      </span>
+    </li>
+  );
+};
 
 Dropdown.Custom = ({ children }) => <>{children}</>;
 

@@ -5,9 +5,12 @@ import { RouterProvider } from "react-router";
 import router from "./routes/router.jsx";
 import { Provider } from "react-redux";
 import store from "./redux/store";
+import DarkModeProvider from "./context/DarkMode.jsx";
 
 createRoot(document.getElementById("root")).render(
   <Provider store={store}>
-    <RouterProvider router={router} />
+    <DarkModeProvider>
+      <RouterProvider router={router} />
+    </DarkModeProvider>
   </Provider>
 );

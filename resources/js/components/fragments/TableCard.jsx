@@ -8,6 +8,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState, createContext, useContext, useRef } from "react";
+import { DarkModeContext } from "../../context/DarkMode";
 
 // Context untuk state TableCard
 const TableContext = createContext(null);
@@ -24,14 +25,16 @@ function TableCard({
   bodyScroll = true,
   showSearch = true,
 }) {
+  const {isDarkMode} = useContext(DarkModeContext);
+
   const formSearchRef = useRef(null);
   return (
     <TableContext.Provider value={{ params, setParams, response, bodyScroll }}>
-      <div className="w-full bg-white rounded-lg relative shadow-lg">
+      <div className={`w-full rounded-lg relative shadow-lg ${isDarkMode ? "bg-gray-800" : "bg-white"}`}>
         {/* Header */}
         <div className="w-full flex flex-col sm:flex-row sm:justify-between items-center px-6 py-4">
           <div className="w-full sm:w-1/2 text-center sm:text-start">
-            <h1 className="text-xl font-semibold text-slate-600 mb-3 sm:mb-0">
+            <h1 className={`text-xl font-semibold ${isDarkMode ? "text-white" : "text-slate-600"} mb-3 sm:mb-0`}>
               {title}
             </h1>
           </div>
@@ -50,7 +53,11 @@ function TableCard({
                   name="q"
                   placeholder="Search"
                   defaultValue={params.q}
-                  className="h-8 border-1 border-gray-300 w-full text-sm ps-8 py-2 rounded transition duration-200 ease-in-out ring-gray-300 focus:ring-0 focus:outline-none focus:ring-gray-300"
+                  className={`
+                    h-8 border-1 border-gray-300 w-full text-sm ps-8 py-2 rounded
+                    transition duration-200 ease-in-out ring-gray-300 focus:ring-0 focus:outline-none focus:ring-gray-300
+                    ${isDarkMode ? "bg-gray-700 text-white placeholder-gray-400 border-gray-600 focus:ring-gray-600" : "bg-white text-slate-600 placeholder-slate-400"}
+                  `}
                 />
                 <button
                   type="submit"
@@ -125,14 +132,17 @@ TableCard.Tfoot = ({ children, className }) => (
   <tfoot className={`${className ?? ""}`}>{children}</tfoot>
 );
 
-TableCard.Tr = ({ children, className, ...props }) => (
-  <tr
-    className={`odd:bg-gray-100 border-0 hover:bg-gray-200 ${className ?? ""}`}
-    {...props}
-  >
-    {children}
-  </tr>
-);
+TableCard.Tr = ({ children, className, ...props }) => {
+  const { isDarkMode } = useContext(DarkModeContext);
+  return (
+    <tr
+      className={`border-0 ${isDarkMode ? "odd:bg-gray-700 hover:bg-gray-600" : "odd:bg-gray-100 hover:bg-gray-200"}  ${className ?? ""}`}
+      {...props}
+    >
+      {children}
+    </tr>
+  );
+};
 
 TableCard.Th = ({ children, className, sortBy, ...props }) => {
   const { params, setParams } = useTable();
@@ -163,22 +173,27 @@ TableCard.Th = ({ children, className, sortBy, ...props }) => {
   );
 };
 
-TableCard.Td = ({ children, className, ...props }) => (
-  <td className={`py-2 px-3 ${className ?? ""}`} {...props}>
-    {children}
-  </td>
-);
+TableCard.Td = ({ children, className, ...props }) => {
+  const { isDarkMode } = useContext(DarkModeContext);
+  return (
+    <td className={`py-2 px-3 ${isDarkMode ? "text-white" : "text-slate-600"} ${className ?? ""}`} {...props}>
+      {children}
+    </td>
+  );
+};
 
-TableCard.Loading = ({ totalColumns, height = "h-4" }) =>
-  Array.from({ length: 10 }).map((_, index) => (
+TableCard.Loading = ({ totalColumns, height = "h-4" }) => {
+  const { isDarkMode } = useContext(DarkModeContext);
+  return (Array.from({ length: 10 }).map((_, index) => (
     <TableCard.Tr key={index} className={"animate-pulse"}>
       {Array.from({ length: totalColumns }).map((_, index) => (
         <TableCard.Td key={index}>
-          <div className={`${height} bg-gray-200 rounded`}>&nbsp;</div>
+          <div className={`${height} ${isDarkMode ? "bg-gray-600" : "bg-gray-200"} rounded`}>&nbsp;</div>
         </TableCard.Td>
       ))}
     </TableCard.Tr>
-  ));
+  )));
+};
 
 TableCard.Empty = ({ totalColumns }) => (
   <TableCard.Tr>

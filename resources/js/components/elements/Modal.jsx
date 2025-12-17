@@ -1,6 +1,7 @@
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { createContext, useContext, useEffect } from "react";
+import { DarkModeContext } from "../../context/DarkMode";
 
 const ModalContext = createContext(null);
 export const useModal = () => useContext(ModalContext);
@@ -34,6 +35,8 @@ const Footer = ({ children, className }) => (
 );
 
 const Modal = ({ show, onClose, children, size = "w-md" }) => {
+  const {isDarkMode} = useContext(DarkModeContext);
+
   useEffect(() => {
     const handleKeyDown = (e) => e.key === "Escape" && onClose?.();
     window.addEventListener("keydown", handleKeyDown);
@@ -44,14 +47,15 @@ const Modal = ({ show, onClose, children, size = "w-md" }) => {
     <ModalContext.Provider value={{ onClose }}>
       <div
         className={`
-          w-screen h-screen fixed inset-0 z-45 flex items-center justify-center bg-black/50
+          w-screen h-screen fixed inset-0 z-45 flex items-center justify-center ${isDarkMode ? 'bg-white/40' : 'bg-black/50'}
           transition-opacity duration-200
           ${show ? "opacity-100" : "opacity-0 pointer-events-none"}
         `}
       >
         <div
           className={`
-            bg-white rounded-lg shadow-lg p-6 max-h-[92vh]
+            ${isDarkMode ? 'bg-slate-800 text-slate-100' : 'bg-white text-slate-900'}
+            rounded-lg shadow-lg p-6 max-h-[92vh]
             transform transition-all duration-400 ease-out
             ${ show ? "opacity-100 scale-100" : "opacity-0 scale-85 pointer-events-none" }
             ${size}

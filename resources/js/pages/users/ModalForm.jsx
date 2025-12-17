@@ -1,14 +1,16 @@
 import Modal from "../../components/elements/Modal";
 import Button from "../../components/elements/Button";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { apiServiceDelete, apiServicePost } from "../../services/api.services";
 import Swal from "sweetalert2";
 import { Toast } from "../../helpers";
 import SelectAsyncPaginate from "../../components/elements/input/SelectAsyncPaginate";
 import FormUser from "../../components/fragments/forms/FormUser";
+import { DarkModeContext } from "../../context/DarkMode";
 
 function ModalForm({ openModal, isEdit, setOpenModal, user, setUser, loadData }) {
   const [errorUser, setErrorUser] = useState({});
+  const {isDarkMode} = useContext(DarkModeContext);
 
 	async function handleSubmit(event) {
 		event.preventDefault();
@@ -147,7 +149,7 @@ function ModalForm({ openModal, isEdit, setOpenModal, user, setUser, loadData })
                   }}
                   checked={user?.reset_password || false}
                 />
-                <label htmlFor="reset_password" className="ms-2 text-sm font-medium text-gray-900">
+                <label htmlFor="reset_password" className={`ms-2 text-sm font-medium ${isDarkMode ? 'text-slate-100' : 'text-gray-900'}`}>
                   Do you want to reset password?
                 </label>
               </div>

@@ -6,15 +6,18 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBars,
   faLock,
+  faMoon,
   faPowerOff,
+  faSun,
   faUserEdit,
 } from "@fortawesome/free-solid-svg-icons";
 import Dropdown from "../elements/Dropdown";
 import useAuth from "../../hooks/useAuth";
 import { apiService } from "../../services/api.services";
 import ModalEditProfile from "../fragments/ModalEditProfile";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import ModalChangePassword from "../fragments/ModalChangePassword";
+import { DarkModeContext } from "../../context/DarkMode";
 
 export function filterMenusByPermission(menus, userPermissions) {
   return menus
@@ -56,6 +59,7 @@ export function filterMenusByPermission(menus, userPermissions) {
 
 function PrivateNavbar({ setShowNavbar }) {
   const { user } = useAuth();
+  const {isDarkMode, setIsDarkMode} = useContext(DarkModeContext);
   const filteredMenus = filterMenusByPermission(menu, user.permission_names);
   const [openModal, setOpenModal] = useState({
     editProfile: false,
@@ -129,19 +133,25 @@ function PrivateNavbar({ setShowNavbar }) {
                 <Dropdown.Item onClick={() => setOpenModal(prev => ({...prev, editProfile: true}))}>
                   <div className="flex flex-row justify-start items-center gap-2">
                     <FontAwesomeIcon icon={faUserEdit} />
-                    <span className="text-sm text-black">Edit Profile</span>
+                    <span className={`text-sm ${isDarkMode ? "text-white" : "text-black"}`}>Edit Profile</span>
                   </div>
                 </Dropdown.Item>
                 <Dropdown.Item onClick={() => setOpenModal(prev => ({...prev, changePassword: true}))}>
                   <div className="flex flex-row justify-start items-center gap-2">
                     <FontAwesomeIcon icon={faLock} />
-                    <span className="text-sm text-black">Change Password</span>
+                    <span className={`text-sm ${isDarkMode ? "text-white" : "text-black"}`}>Change Password</span>
+                  </div>
+                </Dropdown.Item>
+                <Dropdown.Item onClick={() => setIsDarkMode(prev => !prev)}>
+                  <div className="flex flex-row justify-start items-center gap-2">
+                    <FontAwesomeIcon icon={isDarkMode ? faSun : faMoon} />
+                    <span className={`text-sm ${isDarkMode ? "text-white" : "text-black"}`}>{isDarkMode ? "Light Mode" : "Dark Mode"}</span>
                   </div>
                 </Dropdown.Item>
                 <Dropdown.Item onClick={logout}>
                   <div className="flex flex-row justify-start items-center gap-2">
                     <FontAwesomeIcon icon={faPowerOff} />
-                    <span className="text-sm text-black">Sign Out</span>
+                    <span className={`text-sm ${isDarkMode ? "text-white" : "text-black"}`}>Sign Out</span>
                   </div>
                 </Dropdown.Item>
               </Dropdown>

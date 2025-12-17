@@ -1,14 +1,13 @@
 import { Tooltip } from "react-tooltip";
 import PrivateNavbar from "./PrivateNavbar.jsx";
-import { storage_url } from "../../helpers.js";
 import SidebarMenu from "../fragments/SidebarMenu.jsx";
 import Footer from "./Footer.jsx";
-import { useState } from "react";
-import useAuth from "../../hooks/useAuth.js";
+import { useContext, useState } from "react";
+import { DarkModeContext } from "../../context/DarkMode.jsx";
 
 function PrivateLayout({ children }) {
   const [showNavbar, setShowNavbar] = useState(false);
-  const { user } = useAuth();
+  const {isDarkMode} = useContext(DarkModeContext);
 
   return (
     <>
@@ -41,7 +40,7 @@ function PrivateLayout({ children }) {
           ${showNavbar ? "opacity-50 visible" : "opacity-0 invisible"}
         `}
       />
-      <div className={`w-full min-h-screen flex flex-col px-2 py-4 gap-6 sm:px-4 sm:py-4 bg-[url(/images/background/product-bg.jpg)]`}>
+      <div className={`w-full min-h-screen flex flex-col px-2 py-4 gap-6 sm:px-4 sm:py-4 ${isDarkMode ? "bg-[url(/images/background/product-bg-dark.png)]" : "bg-[url(/images/background/product-bg.jpg)]"} bg-no-repeat bg-cover`}>
         <PrivateNavbar setShowNavbar={setShowNavbar} />
         <div className="flex justify-center items-start gap-4">
           <div className="flex w-full lg:w-5/7">{children}</div>

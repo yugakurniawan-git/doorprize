@@ -53,6 +53,9 @@ function Page() {
 		setIsLoading(loading);
 		const response = await apiService("GET", "/api/roles", {
 			params: {
+        include: [
+          "permissions:id,name"
+        ],
 				...params,
 			},
 		});

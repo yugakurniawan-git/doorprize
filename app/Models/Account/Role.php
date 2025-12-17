@@ -29,4 +29,17 @@ class Role extends Model
   {
     return $this->belongsToMany(Permission::class, 'role_has_permissions', 'role_id', 'permission_id');
   }
+
+  public function assignPermission($permissionNames)
+  {
+    $permissions = is_array($permissionNames) ? $permissionNames : explode('|', $permissionNames);
+
+    foreach ($permissions as $permissionName) {
+      $permissionName = trim($permissionName);
+      $permission = Permission::where('name', $permissionName)->first();
+      if ($permission && !$this->permissions()->where('permission_id', $permission->id)->exists()) {
+        $this->permissions()->attach($permission->id);
+      }
+    }
+  }
 }

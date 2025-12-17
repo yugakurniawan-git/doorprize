@@ -52,6 +52,13 @@ class RoleSeeder extends Seeder
       'view doorprize image',
       'edit doorprize image',
       'delete doorprize image',
+
+      // winners
+      "view list winners",
+      'create winner',
+      'view winner',
+      'edit winner',
+      'delete winner',
     ]);
   }
 
@@ -78,6 +85,13 @@ class RoleSeeder extends Seeder
       'view doorprize image',
       'edit doorprize image',
       'delete doorprize image',
+
+      // winners
+      "view list winners",
+      'create winner',
+      'view winner',
+      'edit winner',
+      'delete winner',
     ]);
   }
 }

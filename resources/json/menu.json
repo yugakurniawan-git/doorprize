@@ -1,7 +1,30 @@
 [
   {
     "name": "Doorprizes Management",
-    "url": "/doorprizes"
+    "can": [
+      "view list doorprizes",
+      "view doorprize",
+      "view list winners",
+      "view winner"
+    ],
+    "submenu": [
+      {
+        "name": "Doorprizes",
+        "url": "/doorprizes",
+        "can": [
+          "view list doorprizes",
+          "view doorprize"
+        ]
+      },
+      {
+        "name": "Winners",
+        "url": "/winners",
+        "can": [
+          "view list winners",
+          "view winner"
+        ]
+      }
+    ]
   },
   {
     "name": "Users Management",

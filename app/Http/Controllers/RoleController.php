@@ -47,15 +47,25 @@ class RoleController extends Controller
   public function store(Request $request)
   {
     $data = $request->validate([
-      'id'    => 'nullable|string',
-      'name'  => 'required|string|max:100|unique:roles,name,' . $request->id,
+      'id'            => 'nullable|string',
+      'name'          => 'required|string|max:100|unique:roles,name,' . $request->id,
+      'permissions'   => 'sometimes|array',
+      'permissions.*' => 'string|exists:permissions,name',
     ], [], [
       'name'  => 'Name',
+      'permissions' => 'Permissions',
     ]);
 
     $data['guard_name'] = 'api';
 
     $role = Role::updateOrCreate(['id' => $request->id], $data);
+
+    $role->permissions()->detach();
+    if (isset($data['permissions'])) {
+      foreach ($data['permissions'] as $permissionName) {
+        $role->assignPermission($permissionName);
+      }
+    }
     return $role;
   }
 

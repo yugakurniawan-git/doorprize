@@ -5,6 +5,7 @@ import { useState } from "react";
 import { apiServiceDelete, apiServicePost } from "../../services/api.services";
 import Swal from "sweetalert2";
 import { Toast } from "../../helpers";
+import SelectAsyncPaginate from "../../components/elements/input/SelectAsyncPaginate";
 
 function ModalForm({ openModal, isEdit, setOpenModal, role, setRole, loadData }) {
   const [errorRole, setErrorRole] = useState({});
@@ -53,7 +54,10 @@ function ModalForm({ openModal, isEdit, setOpenModal, role, setRole, loadData })
 	}
 
   return (
-    <Modal show={openModal} onClose={() => setOpenModal(false)}>
+    <Modal show={openModal} onClose={() => {
+      setOpenModal(false);
+      setRole({});
+    }} size="w-4xl">
       <form
         className="mb-0"
         onSubmit={(event) => handleSubmit(event)}
@@ -81,6 +85,35 @@ function ModalForm({ openModal, isEdit, setOpenModal, role, setRole, loadData })
                 });
               }}
               error={errorRole?.name}
+            />
+            <SelectAsyncPaginate
+              label="Permissions"
+              name="permissions[]"
+              url="/api/permissions?fields[]=id&fields[]=name"
+              getOptionValue={(option) => option.name}
+              getOptionLabel={(option) => option.name}
+              isMulti={true}
+              closeMenuOnSelect={false}
+              value={role?.permissions}
+              onChange={(selectedOption) => {
+                if (selectedOption.length > 0) {
+                  setRole((prev) => ({
+                    ...prev,
+                    permissions: selectedOption,
+                  }));
+                } else {
+                  const updatedRole = { ...role };
+                  delete updatedRole.permissions;
+                  setRole(updatedRole);
+                }
+                setErrorRole((prev) => ({
+                  ...prev,
+                  permissions: null,
+                }));
+              }}
+              menuPlacement="top"
+              menuPortalTarget={document.body}
+              styles={{ menuPortal: (base) => ({ ...base, zIndex: 999999 }) }}
             />
           </div>
         </Modal.Body>

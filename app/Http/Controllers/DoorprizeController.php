@@ -48,16 +48,19 @@ class DoorprizeController extends Controller
   public function store(Request $request)
   {
     $data = $request->validate([
-      'id'            => 'nullable|string',
-      'name'          => 'required|string|max:100',
-      'description'   => 'sometimes|string',
-      'images'        => 'sometimes|array',
-      'images.*'      => 'file|image|max:1024',
-      'winners_quota' => 'sometimes|integer|min:1',
+      'id'              => 'nullable|string',
+      'name'            => 'required|string|max:100',
+      'description'     => 'sometimes|string',
+      'images'          => 'sometimes|array',
+      'images.*'        => 'file|image|max:1024',
+      'winners_quota'   => 'sometimes|integer|min:1',
+      'remove_images'   => 'sometimes|array',
+      'remove_images.*' => 'integer|exists:doorprize_images,id',
     ], [], [
       'name'          => 'Name',
       'description'   => 'Description',
       'images'        => 'Images',
+      'images.*'      => 'Image File',
       'winners_quota' => 'Winners Quota',
     ]);
 
@@ -69,6 +72,15 @@ class DoorprizeController extends Controller
         $doorprize->images()->create([
           'image_path' => $path,
         ]);
+      }
+    }
+
+    if (isset($data['remove_images'])) {
+      foreach ($data['remove_images'] as $imageId) {
+        $image = $doorprize->images()->where('id', $imageId)->first();
+        if ($image) {
+          $image->delete();
+        }
       }
     }
 

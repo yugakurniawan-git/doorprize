@@ -12,8 +12,11 @@ import ModalForm from "./ModalForm";
 // import useLoadData from "../../hooks/useLoadData";
 import moment from "moment";
 import useAuth from "../../hooks/useAuth";
+import { Fancybox } from "@fancyapps/ui";
+import "@fancyapps/ui/dist/fancybox/fancybox.css";
 
 function Page() {
+  Fancybox.bind();
   // useLoadData((data) => {
   //   if (data.action === 'load-data' && data.table === 'doorprizes') {
   //     getDoorprizes();
@@ -53,6 +56,7 @@ function Page() {
 		setIsLoading(loading);
 		const response = await apiService("GET", "/api/doorprizes", {
 			params: {
+        include: ["images:id,doorprize_id,image_path"],
 				...params,
 			},
 		});

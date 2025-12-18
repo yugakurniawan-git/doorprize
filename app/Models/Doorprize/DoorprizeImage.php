@@ -5,6 +5,7 @@ namespace App\Models\Doorprize;
 use App\Models\BaseModel;
 use App\Models\CustomSoftDeletes;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class DoorprizeImage extends Model
 {
@@ -19,8 +20,17 @@ class DoorprizeImage extends Model
     'deleted_by',
   ];
 
+  public $appends = [
+    'image_url',
+  ];
+
   public function doorprize()
   {
     return $this->belongsTo(Doorprize::class, 'doorprize_id', 'id');
+  }
+
+  public function getImageUrlAttribute()
+  {
+    return Storage::disk('public')->url($this->image_path);
   }
 }

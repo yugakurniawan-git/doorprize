@@ -7,10 +7,12 @@ import { Toast } from "../../helpers";
 import SelectAsyncPaginate from "../../components/elements/input/SelectAsyncPaginate";
 import FormUser from "../../components/fragments/forms/FormUser";
 import { DarkModeContext } from "../../context/DarkMode";
+import useAuth from "../../hooks/useAuth";
 
-function ModalForm({ openModal, isEdit, setOpenModal, user, setUser, loadData }) {
+function ModalForm({ openModal, setOpenModal, user, setUser, loadData }) {
   const [errorUser, setErrorUser] = useState({});
   const {isDarkMode} = useContext(DarkModeContext);
+  const { can } = useAuth();
 
 	async function handleSubmit(event) {
 		event.preventDefault();
@@ -26,12 +28,10 @@ function ModalForm({ openModal, isEdit, setOpenModal, user, setUser, loadData })
 		const response = await apiServicePost("/api/users",formData);
 		if ([200, 201].includes(response.status)) {
       loadData();
-			setOpenModal((prev) => ({...prev, form: false}));
-      setErrorUser({});
-      setUser(null);
+      handleCloseModal();
       Toast.fire({
         icon: 'success',
-        title: isEdit ? 'User updated successfully' : 'User added successfully'
+        title: user?.id ? 'User updated successfully' : 'User added successfully'
       });
 		} else {
 			setErrorUser(response.data?.errors);
@@ -51,9 +51,7 @@ function ModalForm({ openModal, isEdit, setOpenModal, user, setUser, loadData })
 				const response = await apiServiceDelete(`/api/users/${user.id}`);
 				if (response.status == 200) {
 					loadData();
-          setOpenModal((prev) => ({...prev, form: false}));
-          setUser(null);
-          setErrorUser({});
+          handleCloseModal();
           Toast.fire({
             icon: 'success',
             title: 'User deleted successfully'
@@ -63,18 +61,20 @@ function ModalForm({ openModal, isEdit, setOpenModal, user, setUser, loadData })
 		});
 	}
 
+  function handleCloseModal() {
+    setOpenModal((prev) => ({...prev, form: false}));
+    setErrorUser({});
+    setUser({});
+  }
+
   return (
-    <Modal show={openModal} onClose={() => {
-      setOpenModal((prev) => ({...prev, form: false}));
-      setErrorUser(null);
-      setUser(null);
-    }}>
+    <Modal show={openModal} onClose={handleCloseModal}>
       <form
         className="mb-0"
         onSubmit={(event) => handleSubmit(event)}
         encType="multipart/form-data"
       >
-        <Modal.Header>{isEdit ? "Edit" : "Add"} User</Modal.Header>
+        <Modal.Header>{user?.id ? "Edit" : "Add"} User</Modal.Header>
         <Modal.Body>
           <input type="hidden" name="id" value={user?.id || ""} />
           <div className="grid grid-cols-1 gap-4">
@@ -134,7 +134,7 @@ function ModalForm({ openModal, isEdit, setOpenModal, user, setUser, loadData })
               menuPortalTarget={document.body}
               styles={{ menuPortal: (base) => ({ ...base, zIndex: 999999 }) }}
             />
-            {isEdit && (
+            {user?.id && (
               <div className="flex items-center">
                 <input
                   type="checkbox"
@@ -157,12 +157,17 @@ function ModalForm({ openModal, isEdit, setOpenModal, user, setUser, loadData })
           </div>
         </Modal.Body>
         <Modal.Footer className={`flex justify-between items-center gap-2`}>
-          {isEdit && (
-            <Button type="button" bg="bg-red-500" onClick={handleDelete}>Delete</Button>
+          {user?.id && can("delete user") && (
+            <Button type="button" bg="bg-black" onClick={handleDelete}>Delete</Button>
           )}
           <div className="flex gap-2 ms-auto">
-            <Button type="button" bg="bg-gray-500" onClick={() => setOpenModal((prev) => ({...prev, form: false}))}>Cancel</Button>
-            <Button type="submit">Submit</Button>
+            <Button type="button" bg="bg-gray-500" onClick={handleCloseModal}>Cancel</Button>
+            {can("create user|edit user") && (
+              <Button
+                type="submit"
+                children={user?.id ? "Update" : "Save"}
+              />
+            )}
           </div>
         </Modal.Footer>
       </form>

@@ -6,9 +6,11 @@ import { apiServiceDelete, apiServicePost } from "../../services/api.services";
 import Swal from "sweetalert2";
 import { Toast } from "../../helpers";
 import SelectAsyncPaginate from "../../components/elements/input/SelectAsyncPaginate";
+import useAuth from "../../hooks/useAuth";
 
-function ModalForm({ openModal, isEdit, setOpenModal, role, setRole, loadData }) {
+function ModalForm({ openModal, setOpenModal, role, setRole, loadData }) {
   const [errorRole, setErrorRole] = useState({});
+  const { can } = useAuth();
 
 	async function handleSubmit(event) {
 		event.preventDefault();
@@ -16,12 +18,10 @@ function ModalForm({ openModal, isEdit, setOpenModal, role, setRole, loadData })
 		const response = await apiServicePost("/api/roles",formData);
 		if ([200, 201].includes(response.status)) {
       loadData();
-			setOpenModal(false);
-      setErrorRole({});
-      setRole({});
+      handleCloseModal();
       Toast.fire({
         icon: 'success',
-        title: isEdit ? 'Role updated successfully' : 'Role added successfully'
+        title: role?.id ? 'Role updated successfully' : 'Role added successfully'
       });
 		} else {
 			setErrorRole(response.data?.errors);
@@ -41,9 +41,7 @@ function ModalForm({ openModal, isEdit, setOpenModal, role, setRole, loadData })
 				const response = await apiServiceDelete(`/api/roles/${role.id}`);
 				if (response.status == 200) {
 					loadData();
-          setOpenModal(false);
-          setRole({});
-          setErrorRole({});
+          handleCloseModal();
           Toast.fire({
             icon: 'success',
             title: 'Role deleted successfully'
@@ -53,17 +51,20 @@ function ModalForm({ openModal, isEdit, setOpenModal, role, setRole, loadData })
 		});
 	}
 
+  function handleCloseModal() {
+    setOpenModal(false);
+    setErrorRole({});
+    setRole({});
+  }
+
   return (
-    <Modal show={openModal} onClose={() => {
-      setOpenModal(false);
-      setRole({});
-    }} size="w-4xl">
+    <Modal show={openModal} onClose={handleCloseModal} size="w-4xl">
       <form
         className="mb-0"
         onSubmit={(event) => handleSubmit(event)}
         encType="multipart/form-data"
       >
-        <Modal.Header>{isEdit ? "Edit" : "Add"} Role</Modal.Header>
+        <Modal.Header>{role?.id ? "Edit" : "Add"} Role</Modal.Header>
         <Modal.Body>
           <input type="hidden" name="id" value={role?.id || ""} />
           <div className="grid grid-cols-1 gap-4">
@@ -118,12 +119,17 @@ function ModalForm({ openModal, isEdit, setOpenModal, role, setRole, loadData })
           </div>
         </Modal.Body>
         <Modal.Footer className={`flex justify-between items-center gap-2`}>
-          {isEdit && (
-            <Button type="button" bg="bg-red-500" onClick={handleDelete}>Delete</Button>
+          {role?.id && can("delete role") && (
+            <Button type="button" bg="bg-black" onClick={handleDelete}>Delete</Button>
           )}
           <div className="flex gap-2 ms-auto">
-            <Button type="button" bg="bg-gray-500" onClick={() => setOpenModal(false)}>Cancel</Button>
-            <Button type="submit">Submit</Button>
+            <Button type="button" bg="bg-gray-500" onClick={handleCloseModal}>Cancel</Button>
+            {can("create role|edit role") && (
+              <Button
+                type="submit"
+                children={role?.id ? "Update" : "Save"}
+              />
+            )}
           </div>
         </Modal.Footer>
       </form>

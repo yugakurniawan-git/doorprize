@@ -6,11 +6,17 @@ export default function useAuth() {
   const { user } = useSelector((state) => state.auth);
 
   function can(permissionName) {
-    return user?.permission_names?.includes(permissionName);
+    const permissions = Array.isArray(permissionName)
+      ? permissionName
+      : permissionName.split('|').map(p => p.trim());
+    return permissions.some(permission => user?.permission_names?.includes(permission));
   }
 
   function hasRole(roleName) {
-    return user?.role_names?.includes(roleName);
+    const roles = Array.isArray(roleName)
+      ? roleName
+      : roleName.split('|').map(r => r.trim());
+    return roles.some(role => user?.role_names?.includes(role));
   }
 
   const setUser = (userData) => {

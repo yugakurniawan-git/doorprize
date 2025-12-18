@@ -176,7 +176,6 @@ function Page() {
       </TableCard>
       <ModalForm
         openModal={openModal?.form || false}
-        isEdit={user?.id ? true : false}
         setOpenModal={setOpenModal}
         user={user}
         setUser={setUser}

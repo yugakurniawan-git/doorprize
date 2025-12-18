@@ -5,9 +5,11 @@ import { useState } from "react";
 import { apiServiceDelete, apiServicePost } from "../../services/api.services";
 import Swal from "sweetalert2";
 import { Toast } from "../../helpers";
+import useAuth from "../../hooks/useAuth";
 
-function ModalForm({ openModal, isEdit, setOpenModal, permission, setPermission, loadData }) {
+function ModalForm({ openModal, setOpenModal, permission, setPermission, loadData }) {
   const [errorPermission, setErrorPermission] = useState({});
+  const { can } = useAuth();
 
 	async function handleSubmit(event) {
 		event.preventDefault();
@@ -15,12 +17,10 @@ function ModalForm({ openModal, isEdit, setOpenModal, permission, setPermission,
 		const response = await apiServicePost("/api/permissions",formData);
 		if ([200, 201].includes(response.status)) {
       loadData();
-			setOpenModal(false);
-      setErrorPermission({});
-      setPermission({});
+      handleCloseModal();
       Toast.fire({
         icon: 'success',
-        title: isEdit ? 'Permission updated successfully' : 'Permission added successfully'
+        title: permission?.id ? 'Permission updated successfully' : 'Permission added successfully'
       });
 		} else {
 			setErrorPermission(response.data?.errors);
@@ -40,9 +40,7 @@ function ModalForm({ openModal, isEdit, setOpenModal, permission, setPermission,
 				const response = await apiServiceDelete(`/api/permissions/${permission.id}`);
 				if (response.status == 200) {
 					loadData();
-          setOpenModal(false);
-          setPermission({});
-          setErrorPermission({});
+          handleCloseModal();
           Toast.fire({
             icon: 'success',
             title: 'Permission deleted successfully'
@@ -52,14 +50,20 @@ function ModalForm({ openModal, isEdit, setOpenModal, permission, setPermission,
 		});
 	}
 
+  function handleCloseModal() {
+    setOpenModal(false);
+    setErrorPermission({});
+    setPermission({});
+  }
+
   return (
-    <Modal show={openModal} onClose={() => setOpenModal(false)}>
+    <Modal show={openModal} onClose={handleCloseModal}>
       <form
         className="mb-0"
         onSubmit={(event) => handleSubmit(event)}
         encType="multipart/form-data"
       >
-        <Modal.Header>{isEdit ? "Edit" : "Add"} Permission</Modal.Header>
+        <Modal.Header>{permission?.id ? "Edit" : "Add"} Permission</Modal.Header>
         <Modal.Body>
           <input type="hidden" name="id" value={permission?.id || ""} />
           <div className="grid grid-cols-1 gap-4">
@@ -85,12 +89,17 @@ function ModalForm({ openModal, isEdit, setOpenModal, permission, setPermission,
           </div>
         </Modal.Body>
         <Modal.Footer className={`flex justify-between items-center gap-2`}>
-          {isEdit && (
-            <Button type="button" bg="bg-red-500" onClick={handleDelete}>Delete</Button>
+          {permission?.id && can("delete permission") && (
+            <Button type="button" bg="bg-black" onClick={handleDelete}>Delete</Button>
           )}
           <div className="flex gap-2 ms-auto">
-            <Button type="button" bg="bg-gray-500" onClick={() => setOpenModal(false)}>Cancel</Button>
-            <Button type="submit">Submit</Button>
+            <Button type="button" bg="bg-gray-500" onClick={handleCloseModal}>Cancel</Button>
+            {can("create permission|edit permission") && (
+              <Button
+                type="submit"
+                children={permission?.id ? "Update" : "Save"}
+              />
+            )}
           </div>
         </Modal.Footer>
       </form>

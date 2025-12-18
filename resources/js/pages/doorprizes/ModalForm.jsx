@@ -7,8 +7,10 @@ import Swal from "sweetalert2";
 import { Toast } from "../../helpers";
 import TextArea from "../../components/elements/input/TextArea";
 import FilePreview from "./FilePreview";
+import useAuth from "../../hooks/useAuth";
 
-function ModalForm({ openModal, isEdit, setOpenModal, doorprize, setDoorprize, loadData }) {
+function ModalForm({ openModal, setOpenModal, doorprize, setDoorprize, loadData }) {
+  const { can } = useAuth();
   const [errorDoorprize, setErrorDoorprize] = useState({});
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [removedImageIds, setRemovedImageIds] = useState([]);
@@ -30,7 +32,7 @@ function ModalForm({ openModal, isEdit, setOpenModal, doorprize, setDoorprize, l
       handleCloseModal();
       Toast.fire({
         icon: 'success',
-        title: isEdit ? 'Doorprize updated successfully' : 'Doorprize added successfully'
+        title: doorprize?.id ? 'Doorprize updated successfully' : 'Doorprize added successfully'
       });
 		} else {
 			setErrorDoorprize(response.data?.errors);
@@ -84,7 +86,7 @@ function ModalForm({ openModal, isEdit, setOpenModal, doorprize, setDoorprize, l
         onSubmit={(event) => handleSubmit(event)}
         encType="multipart/form-data"
       >
-        <Modal.Header>{isEdit ? "Edit" : "Add"} Doorprize</Modal.Header>
+        <Modal.Header>{doorprize?.id ? "Edit" : "Add"} Doorprize</Modal.Header>
         <Modal.Body>
           <input type="hidden" name="id" value={doorprize?.id || ""} />
           <input
@@ -205,7 +207,7 @@ function ModalForm({ openModal, isEdit, setOpenModal, doorprize, setDoorprize, l
           </div>
         </Modal.Body>
         <Modal.Footer className={`flex justify-between items-center gap-2`}>
-          {isEdit && (
+          {doorprize?.id && can("delete doorprize") && (
             <Button
               type="button"
               bg="bg-black"
@@ -220,17 +222,21 @@ function ModalForm({ openModal, isEdit, setOpenModal, doorprize, setDoorprize, l
               onClick={handleCloseModal}
               children="Cancel"
             />
-            <Button
-              type="button"
-              bg="bg-rise"
-              color={"text-black"}
-              hover={"hover:bg-yellow-700 hover:text-white cursor-pointer"}
-              onClick={() => inputImages.current.click()} children="Add Images"
-            />
-            <Button
-              type="submit"
-              children={isEdit ? "Update" : "Save"}
-            />
+            {can("create doorprize|edit doorprize") && (
+              <>
+                <Button
+                  type="button"
+                  bg="bg-rise"
+                  color={"text-black"}
+                  hover={"hover:bg-yellow-700 hover:text-white cursor-pointer"}
+                  onClick={() => inputImages.current.click()} children="Add Images"
+                />
+                <Button
+                  type="submit"
+                  children={doorprize?.id ? "Update" : "Save"}
+                />
+              </>
+            )}
           </div>
         </Modal.Footer>
       </form>

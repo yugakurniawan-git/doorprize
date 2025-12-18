@@ -112,7 +112,6 @@ function Page() {
       </TableCard>
       <ModalForm
         openModal={openModal}
-        isEdit={permission?.id ? true : false}
         setOpenModal={setOpenModal}
         permission={permission}
         setPermission={setPermission}

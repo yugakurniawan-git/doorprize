@@ -122,7 +122,6 @@ function Page() {
       </TableCard>
       <ModalForm
         openModal={openModal}
-        isEdit={doorprize?.id ? true : false}
         setOpenModal={setOpenModal}
         doorprize={doorprize}
         setDoorprize={setDoorprize}

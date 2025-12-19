@@ -1,8 +1,10 @@
 import { useEffect } from "react";
 import { useRouteError } from "react-router";
 import Link from "../../components/elements/Link";
+import { DarkModeContext } from "../../context/DarkMode";
 
 function Error500Page() {
+  const { isDarkMode } = useContext(DarkModeContext);
   const error = useRouteError();
   console.error(error);
 
@@ -10,7 +12,7 @@ function Error500Page() {
     document.title = "Doorprize - 500 Internal Server Error";
   });
   return (
-    <div className="w-screen h-screen flex flex-col justify-center items-center gap-4 bg-[url(/images/background/product-bg.jpg)] bg-cover bg-center p-8">
+    <div className={`w-screen h-screen flex flex-col justify-center items-center gap-2 ${isDarkMode ? "bg-[url(/images/background/product-bg-dark.png)]" : "bg-[url(/images/background/product-bg.jpg)]"} bg-no-repeat bg-cover`}>
       <p className="text-[2.375rem] font-bold text-rise text-center">
         Sorry, an unexpected error has occurred.
       </p>

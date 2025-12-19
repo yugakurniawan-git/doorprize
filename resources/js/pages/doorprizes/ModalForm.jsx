@@ -8,6 +8,7 @@ import { Toast } from "../../helpers";
 import TextArea from "../../components/elements/input/TextArea";
 import FilePreview from "./FilePreview";
 import useAuth from "../../hooks/useAuth";
+import Link from "../../components/elements/Link";
 
 function ModalForm({ openModal, setOpenModal, doorprize, setDoorprize, loadData }) {
   const { can } = useAuth();
@@ -216,11 +217,10 @@ function ModalForm({ openModal, setOpenModal, doorprize, setDoorprize, loadData 
             />
           )}
           <div className="flex gap-2 ms-auto">
-            <Button
-              type="button"
-              bg="bg-gray-500"
-              onClick={handleCloseModal}
-              children="Cancel"
+            <Link
+              bg="bg-green-600"
+              children="Print"
+              to={`/doorprizes/${doorprize?.id}/print`} target="_blank"
             />
             {can("create doorprize|edit doorprize") && (
               <>

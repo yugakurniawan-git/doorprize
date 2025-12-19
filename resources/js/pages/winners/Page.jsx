@@ -4,11 +4,7 @@ import Error403Page from "../errors/Error403page";
 import { no } from "../../helpers";
 import TableCard from "../../components/fragments/TableCard";
 import { apiService } from "../../services/api.services";
-import Button from "../../components/elements/Button";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import useUrlParams from "../../hooks/useUrlParams";
-import ModalForm from "./ModalForm";
 // import useLoadData from "../../hooks/useLoadData";
 import moment from "moment";
 import useAuth from "../../hooks/useAuth";
@@ -26,9 +22,7 @@ function Page() {
   }
 
   const [winners, setWinners] = useState({});
-  const [winner, setWinner] = useState({});
 	const [isLoading, setIsLoading] = useState(true);
-	const [openModal, setOpenModal] = useState(false);
 
   useEffect(() => {
     document.title = "Winner - Winners Management";
@@ -121,14 +115,6 @@ function Page() {
           </TableCard.Tbody>
         </TableCard.Table>
       </TableCard>
-      <ModalForm
-        openModal={openModal}
-        isEdit={winner?.id ? true : false}
-        setOpenModal={setOpenModal}
-        winner={winner}
-        setWinner={setWinner}
-        loadData={getWinners}
-      />
     </PrivateLayout>
   );
 }

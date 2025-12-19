@@ -7,14 +7,23 @@ import { apiService } from "../../services/api.services";
 import { Toast } from "../../helpers";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLock, faLockOpen } from "@fortawesome/free-solid-svg-icons";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { DarkModeContext } from "../../context/DarkMode";
 
 function Page() {
-  const { setUser } = useAuth();
+  const { isDarkMode } = useContext(DarkModeContext);
+  const { user, setUser } = useAuth();
   const navigate = useNavigate();
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [account, setAccount] = useState(null);
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (user || token) {
+      navigate('/');
+    }
+  }, [user, navigate]);
 
   async function onSubmit(e) {
     e.preventDefault();
@@ -41,7 +50,7 @@ function Page() {
 
   return (
     <GuestLayout greeting={<h1 className="text-4xl font-bold">Hi, Welcome Back!</h1>}>
-      <form onSubmit={onSubmit} className="bg-white shadow-md rounded-lg overflow-hidden w-full max-w-md mx-auto">
+      <form onSubmit={onSubmit} className={`shadow-md rounded-lg overflow-hidden w-full max-w-md mx-auto ${isDarkMode ? "bg-gray-800" : "bg-white"}`}>
         <div className="p-5 grid grid-cols-1 gap-4">
           <TextInput
             id="username"

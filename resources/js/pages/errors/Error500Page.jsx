@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { useRouteError } from "react-router";
 import Link from "../../components/elements/Link";
 import { DarkModeContext } from "../../context/DarkMode";

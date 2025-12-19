@@ -1,29 +1,21 @@
-import { Link, useNavigate } from "react-router";
-import { useEffect } from "react";
-import useAuth from "../../hooks/useAuth";
+import { useContext } from "react";
+import { Link } from "react-router";
+import { DarkModeContext } from "../../context/DarkMode";
 
 function GuestLayout({ children, greeting }) {
-  const { user } = useAuth();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (user || token) {
-      navigate('/');
-    }
-  }, [user, navigate]);
+  const { isDarkMode } = useContext(DarkModeContext);
 
   return (
     <div className="flex flex-col lg:flex-row">
-      <div className="hidden lg:flex lg:items-center lg:justify-center bg-[url('/images/background/product-bg.jpg')] bg-cover bg-no-repeat bg-center p-8 lg:w-4/6">
+      <div className={`p-8 lg:w-4/6 hidden lg:flex lg:items-center lg:justify-center bg-center ${isDarkMode ? "bg-[url(/images/background/product-bg-dark.png)]" : "bg-[url(/images/background/product-bg.jpg)]"} bg-no-repeat bg-cover`}>
         <img src="/logo/logo.png" alt="Welcome Image" className="self-center w-96" />
       </div>
-      <div className="w-full lg:w-2/6">
+      <div className={`w-full lg:w-2/6 ${isDarkMode ? "bg-gray-900" : "bg-white"} flex justify-center items-center`}>
         <div className="min-h-screen flex flex-col justify-center items-center pt-6 sm:pt-0">
           <a href="/">
             <img src="/logo/logo-kenji.png" alt="logo" className="w-96" />
           </a>
-          <div className="my-8 text-center">
+          <div className={`my-8 text-center w-full px-6 sm:px-0 ${isDarkMode ? "text-white" : "text-gray-800"}`}>
             { greeting }
           </div>
 
@@ -37,7 +29,7 @@ function GuestLayout({ children, greeting }) {
         </div>
       </div>
     </div>
-    );
+  );
 }
 
 export default GuestLayout;

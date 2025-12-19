@@ -4,12 +4,12 @@ namespace App\Models;
 
 use App\Events\LoadDataEvent;
 use App\Models\Account\User;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Support\Str;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 trait BaseModel
 {
@@ -316,8 +316,24 @@ trait BaseModel
       $query->orderBy($sortBy, $sortType);
     }
 
+    $perPage = request('per_page', $options['per_page']);
+
+    // Handle the case when per_page is -1 (get all data)
+    if ($perPage == -1) {
+      $data = $query->get();
+
+      // Create a fake pagination response for consistency with frontend
+      return new \Illuminate\Pagination\LengthAwarePaginator(
+        $data,
+        $data->count(),
+        $data->count(),
+        1,
+        ['path' => request()->url()]
+      );
+    }
+
     return $query->paginate(
-      request('per_page', $options['per_page']),
+      $perPage,
       ['*'],
       'page',
       request('page', $options['page'])

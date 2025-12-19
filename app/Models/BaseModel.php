@@ -10,6 +10,7 @@ use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Support\Str;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Log;
 
 trait BaseModel
 {
@@ -245,26 +246,15 @@ trait BaseModel
         case 'in':
           $q->whereIn($column, explode('|', $value));
           break;
-
-        case 'not in':
+        case 'not_in':
           $q->whereNotIn($column, explode('|', $value));
           break;
 
         case 'null':
           $q->whereNull($column);
           break;
-
-        case 'not null':
+        case 'not_null':
           $q->whereNotNull($column);
-          break;
-
-        case 'like':
-          $q->where($column, 'like', $value);
-          break;
-
-        case '!=':
-        case '<>':
-          $q->where($column, '!=', $value);
           break;
 
         case 'between':
@@ -277,6 +267,25 @@ trait BaseModel
 
         case 'year':
           $q->whereYear($column, $value);
+          break;
+        case 'month':
+          $q->whereMonth($column, $value);
+          break;
+        case 'day':
+          $q->whereDay($column, $value);
+          break;
+        case 'date':
+          $q->whereDate($column, $value);
+          break;
+
+        case 'like':
+        case '!=':
+        case '<>':
+        case '>':
+        case '<':
+        case '>=':
+        case '<=':
+          $q->where($column, $operator, $value);
           break;
 
         default:
@@ -317,6 +326,7 @@ trait BaseModel
     }
 
     $perPage = request('per_page', $options['per_page']);
+    Log::info("SQL Query: " . $query->toSql());
 
     // Handle the case when per_page is -1 (get all data)
     if ($perPage == -1) {

@@ -8,6 +8,7 @@ import useUrlParams from "../../hooks/useUrlParams";
 // import useLoadData from "../../hooks/useLoadData";
 import moment from "moment";
 import useAuth from "../../hooks/useAuth";
+import { Link } from "react-router";
 
 function Page() {
   // useLoadData((data) => {
@@ -30,6 +31,7 @@ function Page() {
       ...prev,
       sort_by: params.sort_by || "created_at",
       sort_type: params.sort_type || "desc",
+      "claimed_at:not_null": 1
     }));
   }, []);
 
@@ -41,6 +43,7 @@ function Page() {
     params.page,
     params.per_page,
     params.q,
+    params["claimed_at:not_null"],
   ]);
 
 	async function getWinners(loading = false) {
@@ -60,7 +63,7 @@ function Page() {
   return (
     <PrivateLayout>
       <TableCard
-        title="Winners Management"
+        title="Winners"
         response={winners}
         setParams={setParams}
         params={params}
@@ -94,20 +97,21 @@ function Page() {
               winners?.data?.map((item, index) => (
                 <TableCard.Tr
                   key={item.id}
-                  className={can("create winner") ? "cursor-pointer" : ""}
-                  onClick={() => {
-                    // if (can("create winner")) {
-                    //   setWinner(item);
-                    //   setOpenModal(true);
-                    // }
-                  }}
                 >
                   <TableCard.Td>{no(winners, index + 1)}</TableCard.Td>
                   <TableCard.Td>{item.doorprize?.name}</TableCard.Td>
                   <TableCard.Td>{item.code}</TableCard.Td>
                   <TableCard.Td>{item.name}</TableCard.Td>
-                  <TableCard.Td>{item.email}</TableCard.Td>
-                  <TableCard.Td>{item.phone}</TableCard.Td>
+                  <TableCard.Td>
+                    <Link target="_blank" to={`mailto:${item.email}`} className="text-rise hover:text-primary duration-200 ease-in-out">
+                      {item.email}
+                    </Link>
+                  </TableCard.Td>
+                  <TableCard.Td>
+                    <Link target="_blank" to={`https://wa.me/${item.phone}`} className="text-rise hover:text-primary duration-200 ease-in-out">
+                      {item.phone}
+                    </Link>
+                  </TableCard.Td>
                   <TableCard.Td>{item.claimed_at && moment(item.claimed_at).format('lll')}</TableCard.Td>
                 </TableCard.Tr>
               ))

@@ -84,11 +84,11 @@ function Page() {
           <TableCard.Thead>
             <tr>
               <TableCard.Th className="text-start">No</TableCard.Th>
+              <TableCard.Th className="text-start" sortBy="name">Winner</TableCard.Th>
               <TableCard.Th className="text-start" sortBy="doorprize->name">Doorprize</TableCard.Th>
+              <TableCard.Th className="text-start" sortBy="address">Address</TableCard.Th>
+              <TableCard.Th className="text-start" sortBy="id">ID</TableCard.Th>
               <TableCard.Th className="text-start" sortBy="code">Code</TableCard.Th>
-              <TableCard.Th className="text-start" sortBy="name">Winner Name</TableCard.Th>
-              <TableCard.Th className="text-start" sortBy="email">Email</TableCard.Th>
-              <TableCard.Th className="text-start" sortBy="phone">Phone</TableCard.Th>
               <TableCard.Th className="text-start" sortBy="claimed_at">Claimed At</TableCard.Th>
             </tr>
           </TableCard.Thead>
@@ -99,19 +99,19 @@ function Page() {
                   key={item.id}
                 >
                   <TableCard.Td>{no(winners, index + 1)}</TableCard.Td>
-                  <TableCard.Td>{item.doorprize?.name}</TableCard.Td>
-                  <TableCard.Td>{item.code}</TableCard.Td>
-                  <TableCard.Td>{item.name}</TableCard.Td>
                   <TableCard.Td>
+                    {item.name} <br />
                     <Link target="_blank" to={`mailto:${item.email}`} className="text-rise hover:text-primary duration-200 ease-in-out">
                       {item.email}
-                    </Link>
-                  </TableCard.Td>
-                  <TableCard.Td>
+                    </Link> <br />
                     <Link target="_blank" to={`https://wa.me/${item.phone}`} className="text-rise hover:text-primary duration-200 ease-in-out">
                       {item.phone}
                     </Link>
                   </TableCard.Td>
+                  <TableCard.Td>{item.doorprize?.name}</TableCard.Td>
+                  <TableCard.Td>{item.address}</TableCard.Td>
+                  <TableCard.Td>{item.id}</TableCard.Td>
+                  <TableCard.Td>{item.code}</TableCard.Td>
                   <TableCard.Td>{item.claimed_at && moment(item.claimed_at).format('lll')}</TableCard.Td>
                 </TableCard.Tr>
               ))

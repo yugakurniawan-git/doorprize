@@ -7,7 +7,7 @@ import { apiService } from "../../services/api.services";
 import { Toast } from "../../helpers";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLock, faLockOpen } from "@fortawesome/free-solid-svg-icons";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { DarkModeContext } from "../../context/DarkMode";
 
 function Page() {

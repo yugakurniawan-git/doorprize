@@ -36,7 +36,9 @@ function Page() {
   }, []);
 
 	useEffect(() => {
-		getWinners(true);
+    if (params.sort_by && params.sort_type && params["claimed_at:not_null"]) {
+		  getWinners(true);
+    }
 	}, [
     params.sort_by,
     params.sort_type,

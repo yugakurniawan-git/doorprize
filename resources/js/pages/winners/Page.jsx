@@ -95,7 +95,7 @@ function Page() {
             </tr>
           </TableCard.Thead>
           <TableCard.Tbody>
-            {isLoading ? <TableCard.Loading totalColumns={8} /> : winners?.data?.length > 0 ? (
+            {isLoading ? <TableCard.Loading totalColumns={7} /> : winners?.data?.length > 0 ? (
               winners?.data?.map((item, index) => (
                 <TableCard.Tr
                   key={item.id}
@@ -117,7 +117,7 @@ function Page() {
                   <TableCard.Td>{item.claimed_at && moment(item.claimed_at).format('lll')}</TableCard.Td>
                 </TableCard.Tr>
               ))
-            ) : <TableCard.Empty totalColumns={8} />}
+            ) : <TableCard.Empty totalColumns={7} />}
           </TableCard.Tbody>
         </TableCard.Table>
       </TableCard>

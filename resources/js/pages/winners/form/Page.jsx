@@ -9,6 +9,7 @@ import { useNavigate, useParams } from "react-router";
 import Loading from "../../../components/elements/Loading";
 import { Fancybox } from "@fancyapps/ui";
 import "@fancyapps/ui/dist/fancybox/fancybox.css";
+import Swal from "sweetalert2";
 
 function Page() {
   Fancybox.bind();
@@ -38,9 +39,25 @@ function Page() {
   async function onSubmit(e) {
     e.preventDefault();
     const form = new FormData(e.target);
-    const response = await apiServicePost("/api/winners", form);
+    const response = await apiService("POST", "/api/winners", {
+      data: form,
+    });
     if (response.status != 200) {
-      setError(response.data.errors);
+      if (response.status == 404) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Code Not Found',
+          text: 'The winner code you entered does not exist.',
+        });
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Submission Failed',
+          text: 'There were errors with your submission. Please check the form and try again.',
+        });
+        setError(response.data.errors);
+      }
+      return false;
     } else {
       location.reload();
     }

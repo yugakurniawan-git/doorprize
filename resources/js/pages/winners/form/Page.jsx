@@ -7,6 +7,7 @@ import { DarkModeContext } from "../../../context/DarkMode";
 import TextArea from "../../../components/elements/input/TextArea";
 import { useNavigate, useParams } from "react-router";
 import Error404Page from "../../errors/Error404Page";
+import Loading from "../../../components/elements/Loading";
 
 function Page() {
   const { isDarkMode } = useContext(DarkModeContext);
@@ -22,13 +23,16 @@ function Page() {
 
   async function getDoorprize(loading = false) {
     setIsLoading(loading);
-    const response = await apiService("GET", `/api/winners/${id}`);
+    const response = await apiService("GET", `/api/winners/${id}`, {
+      params: {
+        include: [
+          'doorprize:id,name',
+          'doorprize.images:id,doorprize_id,image_path',
+        ]
+      }
+    });
     if (response.status == 404) {
       navigate("/404");
-      return;
-    }
-    if (response.data.claimed_at) {
-      navigate("/thank-you");
       return;
     }
     setWinner(response.data);
@@ -47,77 +51,107 @@ function Page() {
     }
   };
 
-  return (
-    <GuestLayout greeting={<h1 className="text-4xl font-bold">Hi, Winners!</h1>}>
-      <form onSubmit={onSubmit} className={`shadow-md rounded-lg overflow-hidden w-full max-w-md mx-auto ${isDarkMode ? "bg-gray-800" : "bg-white"}`}>
-        <div className="p-5 grid grid-cols-1 gap-4">
-          <input type="hidden" name="id" value={id || ""}/>
-          <input type="hidden" name="doorprize_id" value={winner.doorprize_id || ""}/>
-          <TextInput
-            type="text"
-            name="code"
-            label="Code"
-            placeholder="XXXX-XXXX-XXXX"
-            required
-            onChange={(e) => {
-              setError((prev) => ({...prev, code: null}));
-            }}
-            error={error?.code}
-          />
-          <TextInput
-            type="text"
-            name="name"
-            label="Name"
-            placeholder="John Doe"
-            required
-            onChange={(e) => {
-              setError((prev) => ({...prev, name: null}));
-            }}
-            error={error?.name}
-          />
-          <TextInput
-            type="text"
-            name="email"
-            label="Email"
-            placeholder="john.doe@gmail.com"
-            required
-            onChange={(e) => {
-              setError((prev) => ({...prev, email: null}));
-            }}
-            error={error?.email}
-          />
-          <TextInput
-            type="text"
-            name="phone"
-            label="Phone"
-            placeholder="6281234567890"
-            required
-            onChange={(e) => {
-              setError((prev) => ({...prev, phone: null}));
-            }}
-            error={error?.phone}
-          />
-          <TextArea
-            name="address"
-            label="Address"
-            placeholder="Jl. Example No.123, City, Country"
-            required
-            onChange={(e) => {
-              setError((prev) => ({...prev, address: null}));
-            }}
-            error={error?.address}
-          />
-          <div className="flex items-center justify-end mt-4">
-            <Button
-              type="submit"
-              className={`w-full`}
-              children={`Submit`}
-            />
-          </div>
+  if (isLoading) {
+    return (
+      <div className={`w-screen h-screen flex flex-col justify-center items-center gap-2 ${isDarkMode ? "bg-[url(/images/background/product-bg-dark.png)]" : "bg-[url(/images/background/product-bg.jpg)]"} bg-no-repeat bg-cover`}>
+        <div className="w-96 mx-auto">
+          <Loading />
         </div>
-      </form>
-    </GuestLayout>
-  );
+      </div>
+    );
+  } else if (winner.claimed_at) {
+    return (
+      <div className={`w-screen h-screen flex flex-col justify-center items-center gap-2 ${isDarkMode ? "bg-[url(/images/background/product-bg-dark.png)]" : "bg-[url(/images/background/product-bg.jpg)]"} bg-no-repeat bg-cover`}>
+        <p className="text-[2.375rem] font-bold text-rise">Thank You {winner.name}</p>
+        <p className="text-rise font-sans">You have already claimed your {winner.doorprize?.name || "prize"}.</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {winner.doorprize?.images && winner.doorprize.images
+              .map((image, index) => (
+              <div key={`existing-${image.id}`} className="relative">
+                <a href={image.image_url} data-fancybox="gallery">
+                  <img
+                    src={image.image_url}
+                    className="w-full h-32 object-cover rounded hover:opacity-80 duration-200 ease-in-out cursor-pointer"
+                  />
+                </a>
+              </div>
+            ))}
+        </div>
+      </div>
+    );
+  } else {
+    return (
+      <GuestLayout greeting={<h1 className="text-4xl font-bold">Hi, Winners!</h1>}>
+        <form onSubmit={onSubmit} className={`shadow-md rounded-lg overflow-hidden w-full max-w-md mx-auto ${isDarkMode ? "bg-gray-800" : "bg-white"}`}>
+          <div className="p-5 grid grid-cols-1 gap-4">
+            <input type="hidden" name="id" value={id || ""}/>
+            <input type="hidden" name="doorprize_id" value={winner.doorprize_id || ""}/>
+            <TextInput
+              type="text"
+              name="code"
+              label="Code"
+              placeholder="XXXX-XXXX-XXXX"
+              required
+              onChange={(e) => {
+                setError((prev) => ({...prev, code: null}));
+              }}
+              error={error?.code}
+            />
+            <TextInput
+              type="text"
+              name="name"
+              label="Name"
+              placeholder="John Doe"
+              required
+              onChange={(e) => {
+                setError((prev) => ({...prev, name: null}));
+              }}
+              error={error?.name}
+            />
+            <TextInput
+              type="text"
+              name="email"
+              label="Email"
+              placeholder="john.doe@gmail.com"
+              required
+              onChange={(e) => {
+                setError((prev) => ({...prev, email: null}));
+              }}
+              error={error?.email}
+            />
+            <TextInput
+              type="text"
+              name="phone"
+              label="Phone"
+              placeholder="6281234567890"
+              required
+              onChange={(e) => {
+                setError((prev) => ({...prev, phone: null}));
+              }}
+              error={error?.phone}
+            />
+            <TextArea
+              name="address"
+              label="Address"
+              placeholder="Jl. Example No.123, City, Country"
+              required
+              onChange={(e) => {
+                setError((prev) => ({...prev, address: null}));
+              }}
+              error={error?.address}
+            />
+            <div className="flex items-center justify-end mt-4">
+              <Button
+                type="submit"
+                className={`w-full`}
+                children={`Submit`}
+              />
+            </div>
+          </div>
+        </form>
+      </GuestLayout>
+    );
+  }
 }
 
 export default Page;

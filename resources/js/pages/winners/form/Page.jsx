@@ -6,10 +6,12 @@ import { useContext, useEffect, useState } from "react";
 import { DarkModeContext } from "../../../context/DarkMode";
 import TextArea from "../../../components/elements/input/TextArea";
 import { useNavigate, useParams } from "react-router";
-import Error404Page from "../../errors/Error404Page";
 import Loading from "../../../components/elements/Loading";
+import { Fancybox } from "@fancyapps/ui";
+import "@fancyapps/ui/dist/fancybox/fancybox.css";
 
 function Page() {
+  Fancybox.bind();
   const { isDarkMode } = useContext(DarkModeContext);
   const [winner, setWinner] = useState({});
   const [isLoading, setIsLoading] = useState(false);
@@ -64,18 +66,21 @@ function Page() {
       <div className={`w-screen h-screen flex flex-col justify-center items-center gap-2 ${isDarkMode ? "bg-[url(/images/background/product-bg-dark.png)]" : "bg-[url(/images/background/product-bg.jpg)]"} bg-no-repeat bg-cover`}>
         <p className="text-[2.375rem] font-bold text-rise">Thank You {winner.name}</p>
         <p className="text-rise font-sans">You have already claimed your {winner.doorprize?.name || "prize"}.</p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 place-items-center">
             {winner.doorprize?.images && winner.doorprize.images
-              .map((image, index) => (
-              <div key={`existing-${image.id}`} className="relative">
-                <a href={image.image_url} data-fancybox="gallery">
-                  <img
-                    src={image.image_url}
-                    className="w-full h-32 object-cover rounded hover:opacity-80 duration-200 ease-in-out cursor-pointer"
-                  />
-                </a>
-              </div>
-            ))}
+              .map((image, index) => {
+                const isLastAndOdd = index === winner.doorprize.images.length - 1 && winner.doorprize.images.length % 2 === 1;
+                return (
+                  <div key={index} className={`relative w-full max-w-xs ${isLastAndOdd ? 'md:col-span-2 md:justify-self-center' : ''}`}>
+                    <a href={image.image_url} data-fancybox="gallery">
+                      <img
+                        src={image.image_url}
+                        className="w-full h-32 object-cover rounded hover:opacity-80 duration-200 ease-in-out cursor-pointer"
+                      />
+                    </a>
+                  </div>
+                );
+              })}
         </div>
       </div>
     );

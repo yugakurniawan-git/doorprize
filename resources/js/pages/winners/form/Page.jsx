@@ -28,7 +28,7 @@ function Page() {
       return;
     }
     if (response.data.claimed_at) {
-      navigate("/404");
+      navigate("/thank-you");
       return;
     }
     setWinner(response.data);

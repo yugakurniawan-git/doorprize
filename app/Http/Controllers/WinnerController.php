@@ -77,13 +77,12 @@ class WinnerController extends Controller
    * @param  Winner  $winner
    * @return \Illuminate\Http\Response
    */
-  #[QueryParameter('include', type: 'array<string>', format: 'csv', description: 'Relationships to include', example: '["roles:id,name"]')]
   public function show(Request $request, Winner $winner)
   {
-    if ($request->has('include') && is_array($request->query('include'))) {
-      $winner->load($request->query('include'));
-    }
-    return $winner;
+    return $winner->load([
+      'doorprize:id,name',
+      'doorprize.images:id,doorprize_id,image_path',
+    ]);
   }
 
   /**

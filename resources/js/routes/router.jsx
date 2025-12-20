@@ -11,7 +11,6 @@ import DoorprizePage from "../pages/doorprizes/Page";
 import DoorprizePrintPage from "../pages/doorprizes/print/Page";
 import WinnerPage from "../pages/winners/Page";
 import FormWinnerPage from "../pages/winners/form/Page";
-import ThankYouPage from "../pages/thank-you/Page";
 
 const router = createHashRouter([
   {
@@ -38,11 +37,6 @@ const router = createHashRouter([
     path: "/doorprize-winners/:id",
     errorElement: <Error500Page />,
     element: <FormWinnerPage />,
-  },
-  {
-    path: "/thank-you",
-    errorElement: <Error500Page />,
-    element: <ThankYouPage />,
   },
   {
     path: "/*",

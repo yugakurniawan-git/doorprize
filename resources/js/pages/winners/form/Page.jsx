@@ -25,14 +25,7 @@ function Page() {
 
   async function getDoorprize(loading = false) {
     setIsLoading(loading);
-    const response = await apiService("GET", `/api/winners/${id}`, {
-      params: {
-        include: [
-          'doorprize:id,name',
-          'doorprize.images:id,doorprize_id,image_path',
-        ]
-      }
-    });
+    const response = await apiService("GET", `/api/winners/${id}`);
     if (response.status == 404) {
       navigate("/404");
       return;
@@ -49,7 +42,7 @@ function Page() {
     if (response.status != 200) {
       setError(response.data.errors);
     } else {
-      navigate("/thank-you");
+      location.reload();
     }
   };
 

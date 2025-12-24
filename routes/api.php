@@ -51,6 +51,7 @@ Route::middleware('api_key')->group(function () {
     // Winners
     Route::get('/winners', [WinnerController::class, 'index'])->middleware('can:view list winners');
     Route::post('/winners', [WinnerController::class, 'store'])->withoutMiddleware('auth');
+    Route::put('/winners/{winner}', [WinnerController::class, 'update'])->middleware('can:edit winner');
     Route::get('/winners/{winner}', [WinnerController::class, 'show'])->withoutMiddleware('auth');
     Route::delete ('/winners/{winner}', [WinnerController::class, 'destroy'])->middleware('can:delete winner');
   });

@@ -79,10 +79,42 @@ class WinnerController extends Controller
    */
   public function show(Request $request, Winner $winner)
   {
-    return $winner->load([
+    $data = $winner->load([
       'doorprize:id,name',
       'doorprize.images:id,doorprize_id,image_path',
+    ])->toArray();
+    unset(
+      $data['created_by'],
+      $data['updated_by'],
+      $data['deleted_by'],
+      $data['created_at'],
+      $data['updated_at'],
+      $data['deleted_at'],
+      $data['doorprize']['total_winners'],
+      $data['doorprize']['winners_quota'],
+    );
+    return $data;
+  }
+
+  /**
+   * Update the specified resource in storage.
+   *
+   * @param  \Illuminate\Http\Request  $request
+   * @param  Winner  $winner
+   * @return \Illuminate\Http\Response
+   */
+  public function update(Request $request, Winner $winner)
+  {
+    $data = $request->validate([
+      'status'        => 'required|integer|in:0,1,2,3,4,5',
+      'notes'         => 'nullable|string',
+    ], [], [
+      'status'        => 'Status',
+      'notes'         => 'Notes',
     ]);
+
+    $winner->update($data);
+    return $winner;
   }
 
   /**

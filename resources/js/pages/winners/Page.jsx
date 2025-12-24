@@ -9,8 +9,13 @@ import useUrlParams from "../../hooks/useUrlParams";
 import moment from "moment";
 import useAuth from "../../hooks/useAuth";
 import { Link } from "react-router";
+import Badge from "../../components/elements/Badge";
+import ModalDetail from "./ModalDetail";
+import { Fancybox } from "@fancyapps/ui";
+import "@fancyapps/ui/dist/fancybox/fancybox.css";
 
 function Page() {
+  Fancybox.bind();
   // useLoadData((data) => {
   //   if (data.action === 'load-data' && data.table === 'winners') {
   //     getWinners();
@@ -23,7 +28,9 @@ function Page() {
   }
 
   const [winners, setWinners] = useState({});
+  const [winner, setWinner] = useState({});
 	const [isLoading, setIsLoading] = useState(true);
+  const [openModal, setOpenModal] = useState(false);
 
   useEffect(() => {
     document.title = "Winner - Winners Management";
@@ -53,7 +60,8 @@ function Page() {
 		const response = await apiService("GET", "/api/winners", {
 			params: {
         include: [
-          "doorprize:id,name"
+          "doorprize:id,name",
+          "doorprize.images:id,doorprize_id,image_path"
         ],
 				...params,
 			},
@@ -71,16 +79,6 @@ function Page() {
         params={params}
         isLoading={isLoading}
         setIsLoading={setIsLoading}
-        // action={(
-        //   <Button data-tooltip-id="tooltip" data-tooltip-content="Add Winner" onClick={() => {
-        //     setWinner({});
-        //     setOpenModal(true);
-        //   }}>
-        //     <div className="flex flex-row justify-center items-center gap-2">
-        //       <FontAwesomeIcon icon={faPlus} />
-        //     </div>
-        //   </Button>
-        // )}
       >
         <TableCard.Table>
           <TableCard.Thead>
@@ -92,13 +90,20 @@ function Page() {
               <TableCard.Th className="text-start" sortBy="id">ID</TableCard.Th>
               <TableCard.Th className="text-start" sortBy="code">Code</TableCard.Th>
               <TableCard.Th className="text-start" sortBy="claimed_at">Claimed At</TableCard.Th>
+              <TableCard.Th className="text-start" sortBy="notes">Notes</TableCard.Th>
+              <TableCard.Th className="text-start" sortBy="status">Status</TableCard.Th>
             </tr>
           </TableCard.Thead>
           <TableCard.Tbody>
-            {isLoading ? <TableCard.Loading totalColumns={7} /> : winners?.data?.length > 0 ? (
+            {isLoading ? <TableCard.Loading totalColumns={9} /> : winners?.data?.length > 0 ? (
               winners?.data?.map((item, index) => (
                 <TableCard.Tr
                   key={item.id}
+                  onClick={() => {
+                    setWinner(item);
+                    setOpenModal(true);
+                  }}
+                  className="cursor-pointer"
                 >
                   <TableCard.Td>{no(winners, index + 1)}</TableCard.Td>
                   <TableCard.Td>
@@ -115,12 +120,25 @@ function Page() {
                   <TableCard.Td>{item.id}</TableCard.Td>
                   <TableCard.Td>{item.code}</TableCard.Td>
                   <TableCard.Td>{item.claimed_at && moment(item.claimed_at).format('lll')}</TableCard.Td>
+                  <TableCard.Td>{item.notes}</TableCard.Td>
+                  <TableCard.Td>
+                    <Badge className={item.status_detail?.class}>
+                      {item.status_detail?.label}
+                    </Badge>
+                  </TableCard.Td>
                 </TableCard.Tr>
               ))
-            ) : <TableCard.Empty totalColumns={7} />}
+            ) : <TableCard.Empty totalColumns={9} />}
           </TableCard.Tbody>
         </TableCard.Table>
       </TableCard>
+      <ModalDetail
+        openModal={openModal}
+        setOpenModal={setOpenModal}
+        winner={winner}
+        setWinner={setWinner}
+        loadData={getWinners}
+      />
     </PrivateLayout>
   );
 }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DoorprizeController;
 use App\Http\Controllers\DoorprizeImageController;
@@ -17,6 +18,10 @@ Route::middleware('api_key')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::post('/profile', [AuthController::class, 'updateProfile'])->name('profile.update');
     Route::put('/password', [AuthController::class, 'changePassword'])->name('password.update');
+
+    // Activity Logs
+    Route::get('/activity-logs', [ActivityLogController::class, 'index'])->middleware('can:view list activity logs');
+    Route::get('/activity-logs/{activityLog}', [ActivityLogController::class, 'show'])->middleware('can:view activity log');
 
     // Users
     Route::get('/users', [UserController::class, 'index'])->middleware('can:view list users');

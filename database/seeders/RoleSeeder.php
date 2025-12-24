@@ -39,6 +39,10 @@ class RoleSeeder extends Seeder
       'edit permission',
       'delete permission',
 
+      // activity logs
+      'view list activity logs',
+      'view activity log',
+
       // doorprizes
       'view list doorprizes',
       'create doorprize',

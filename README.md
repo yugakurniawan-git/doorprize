@@ -7,6 +7,18 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+## Requirements
+- PHP Version : ^8.2
+- NodeJS Version: ^24.12.0
+- NPM Version : ^11.6.2
+
+## Installation and Running
+1. Copy .env.example to .env dan sesuaikan configurasinya (database, dll)
+2. Run ```composer update```
+2. Run ```php artisan migrate --seed```
+3. Run ```npm i```
+4. Run ```composer run dev```
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:

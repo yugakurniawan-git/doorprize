@@ -49,7 +49,10 @@ function Page() {
   };
 
   return (
-    <GuestLayout greeting={<h1 className="text-4xl font-bold">Hi, Welcome Back!</h1>}>
+    <GuestLayout>
+      <div className={`mb-8 text-center w-full ${isDarkMode ? "text-white" : "text-gray-800"}`}>
+        <h1 className="text-4xl font-bold">Hi, Welcome Back!</h1>
+      </div>
       <form onSubmit={onSubmit} className={`shadow-md rounded-lg overflow-hidden w-full max-w-md mx-auto ${isDarkMode ? "bg-gray-800" : "bg-white"}`}>
         <div className="p-5 grid grid-cols-1 gap-4">
           <TextInput

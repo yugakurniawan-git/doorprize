@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { Link } from "react-router";
 import { DarkModeContext } from "../../context/DarkMode";
 
-function GuestLayout({ children, greeting }) {
+function GuestLayout({ children }) {
   const { isDarkMode } = useContext(DarkModeContext);
 
   return (
@@ -11,18 +11,13 @@ function GuestLayout({ children, greeting }) {
         <img src="/logo/logo.png" alt="Welcome Image" className="self-center w-96" />
       </div>
       <div className={`w-full lg:w-2/6 ${isDarkMode ? "bg-gray-900" : "bg-white"} flex justify-center items-center`}>
-        <div className="min-h-screen flex flex-col justify-center items-center pt-6 sm:pt-0">
+        <div className="min-h-screen flex flex-col justify-between items-center gap-4 w-full px-4 py-8">
           <a href="/">
-            <img src="/logo/logo-kenji.png" alt="logo" className="w-96" />
+            <img src="/logo/logo-kenji.png" alt="logo" className="w-48" />
           </a>
-          <div className={`my-8 text-center w-full px-6 sm:px-0 ${isDarkMode ? "text-white" : "text-gray-800"}`}>
-            { greeting }
-          </div>
-
           <div className="w-full sm:max-w-md px-6 py-4 overflow-hidden sm:rounded-lg">
             { children }
           </div>
-
           <footer className="w-full text-center pt-60">
             <p className="text-gray-500">&copy; { new Date().getFullYear() } Doorprize Version 1.0 by <Link to="https://manohara-asri.com" className="text-primary hover:text-warning transition duration-300">PT. Manohara Asri</Link></p>
           </footer>

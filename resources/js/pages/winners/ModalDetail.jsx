@@ -97,7 +97,7 @@ function ModalDetail({ openModal, setOpenModal, winner, setWinner, loadData }) {
                   <SelectInput
                     name="status"
                     options={statusLabels}
-                    value={statusLabels.find((status) => status.value === winner.status)}
+                    value={statusLabels.find((status) => status.value == winner.status)}
                     onChange={(value) => setWinner({ ...winner, status: value ? value.value : null })}
                     isClearable={false}
                     error={errorWinner.status}

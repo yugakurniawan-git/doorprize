@@ -12,7 +12,9 @@ class UserSeeder extends Seeder
    */
   public function run(): void
   {
-    User::firstOrCreate([
+    User::firstOrCreate(
+      ['email' => 'super.admin@manohara-asri.com'],
+      [
       'name'              => 'Super Admin',
       'email'             => 'super.admin@manohara-asri.com',
       'username'          => 'super.admin',
@@ -22,7 +24,9 @@ class UserSeeder extends Seeder
       'updated_at'        => now(),
     ])->assignRole('Super Admin');
 
-    User::firstOrCreate([
+    User::firstOrCreate(
+      ['email' => 'admin@manohara-asri.com'],
+      [
       'name'              => 'Admin',
       'email'             => 'admin@manohara-asri.com',
       'username'          => 'admin',

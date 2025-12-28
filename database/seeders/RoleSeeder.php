@@ -59,6 +59,7 @@ class RoleSeeder extends Seeder
 
       // winners
       "view list winners",
+      "export winners",
       'create winner',
       'view winner',
       'edit winner',
@@ -92,6 +93,7 @@ class RoleSeeder extends Seeder
 
       // winners
       "view list winners",
+      "export winners",
       'create winner',
       'view winner',
       'edit winner',

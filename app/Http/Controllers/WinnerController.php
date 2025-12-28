@@ -65,6 +65,7 @@ class WinnerController extends Controller
     ]);
 
     $winner = Winner::where('id', $request->id)->where('code', $request->code)->whereNull('claimed_at')->firstOrFail();
+    $data['status'] = 1; // claimed
     $data['claimed_at'] = now();
     $winner->update($data);
     return $winner;

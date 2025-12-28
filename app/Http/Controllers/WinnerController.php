@@ -119,6 +119,31 @@ class WinnerController extends Controller
   }
 
   /**
+   * Bulk update for selected resources.
+   * 
+   * @param  \Illuminate\Http\Request  $request
+   * @return \Illuminate\Http\Response
+   */
+  public function bulkUpdate(Request $request)
+  {
+    $data = $request->validate([
+      'ids'     => 'required|array',
+      'status'  => 'required|integer|in:0,1,2,3,4,5',
+      'notes'   => 'nullable|string',
+    ], [], [
+      'ids'     => 'IDs',
+      'status'  => 'Status',
+      'notes'   => 'Notes',
+    ]);
+
+    Winner::whereIn('id', $data['ids'])->update([
+      'status'  => $data['status'],
+      'notes'   => $data['notes'] ?? null,
+    ]);
+    return ['message' => 'Winners status updated successfully.'];
+  }
+
+  /**
    * Remove the specified resource from storage.
    *
    * @param  Winner  $winner

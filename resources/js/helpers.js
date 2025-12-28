@@ -103,3 +103,11 @@ export const handleCopy = async (copiedText, title) => {
 		fallbackCopyText(copiedText, title);
 	}
 };
+
+export const statusWinners = [
+	{ value: 1, label: "Claimed" },
+	{ value: 2, label: "On Process" },
+	{ value: 3, label: "Shipped" },
+	{ value: 4, label: "Delivered" },
+	{ value: 5, label: "Cancelled" },
+];

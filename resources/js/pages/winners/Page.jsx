@@ -1,7 +1,7 @@
 import PrivateLayout from "../../components/layouts/PrivateLayout";
 import { useEffect, useState } from "react";
 import Error403Page from "../errors/Error403page";
-import { no } from "../../helpers";
+import { no, statusWinners } from "../../helpers";
 import TableCard from "../../components/fragments/TableCard";
 import { apiService } from "../../services/api.services";
 import useUrlParams from "../../hooks/useUrlParams";
@@ -16,10 +16,11 @@ import { saveAs } from 'file-saver';
 import { Fancybox } from "@fancyapps/ui";
 import "@fancyapps/ui/dist/fancybox/fancybox.css";
 import Swal from "sweetalert2";
-import { faBars, faFileExcel } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faEdit, faFileExcel } from "@fortawesome/free-solid-svg-icons";
 import Dropdown from "../../components/elements/Dropdown";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import useWindowSize from "../../hooks/useWindowSize";
+import { useRef } from "react";
 
 function Page() {
   Fancybox.bind();
@@ -39,6 +40,9 @@ function Page() {
   const [winner, setWinner] = useState({});
 	const [isLoading, setIsLoading] = useState(true);
   const [openModal, setOpenModal] = useState(false);
+  const [selectedWinners, setSelectedWinners] = useState([]);
+  const statusWinnersRef = useRef(statusWinners[0].value);
+  const noteWinnersRef = useRef('');
 
   useEffect(() => {
     document.title = "Winner - Winners Management";
@@ -104,61 +108,17 @@ function Page() {
 
         // define columns
         worksheet.columns = [
-          { 
-            header: 'No',
-            key: 'no',
-            width: 5,
-          },
-          { 
-            header: 'Name',
-            key: 'name',
-            width: 30,
-          },
-          { 
-            header: 'Email',
-            key: 'email',
-            width: 30,
-          },
-          { 
-            header: 'Phone',
-            key: 'phone',
-            width: 15,
-          },
-          { 
-            header: 'Doorprize',
-            key: 'doorprize',
-            width: 30,
-          },
-          { 
-            header: 'Address',
-            key: 'address',
-            width: 40,
-          },
-          { 
-            header: 'ID',
-            key: 'id',
-            width: 40,
-          },
-          { 
-            header: 'Code',
-            key: 'code',
-            width: 20,
-          },
-          { 
-            header: 'Claimed At',
-            key: 'claimed_at',
-            width: 20,
-          },
-          { 
-            header: 'Notes',
-            key: 'notes',
-            width: 30,
-          },
-          { 
-            header: 'Status',
-            key: 'status',
-            width: 15,
-          },
+          { header: 'No', key: 'no', width: 5 },
+          { header: 'Name', key: 'name', width: 30 },
+          { header: 'Email', key: 'email', width: 30 },
+          { header: 'Phone', key: 'phone', width: 15 },
+          { header: 'Doorprize', key: 'doorprize', width: 30 },
+          { header: 'Address', key: 'address', width: 40 },
+          { header: 'ID', key: 'id', width: 40 },
+          { header: 'Code', key: 'code', width: 20 },
+          { header: 'Claimed At', key: 'claimed_at', width: 20 },
+          { header: 'Notes', key: 'notes', width: 30 },
+          { header: 'Status', key: 'status', width: 15 },
         ];
 
         // add rows
@@ -190,6 +150,61 @@ function Page() {
     });
   }
 
+  async function bulkUpdateStatus() {
+    let selectedStatus = statusWinnersRef.current;
+    let selectedNotes = noteWinnersRef.current;
+    Swal.fire({
+      title: 'Bulk Update Status',
+      html: `
+        <div style="margin-bottom:10px;">Select the new status for the selected winners:</div>
+        <select id="swal-status-select" class="border rounded w-full p-2">
+          ${statusWinners.map(opt => `<option value="${opt.value}">${opt.label}</option>`).join('')}
+        </select>
+        <textarea id="swal-notes-textarea" class="border rounded w-full p-2 mt-2" placeholder="Enter notes"></textarea>
+      `,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, update it!',
+      cancelButtonText: 'Cancel',
+      didOpen: () => {
+        const select = Swal.getPopup().querySelector('#swal-status-select');
+        select.value = statusWinnersRef.current;
+        select.addEventListener('change', (e) => {
+          selectedStatus = e.target.value;
+        });
+        const textarea = Swal.getPopup().querySelector('#swal-notes-textarea');
+        textarea.value = noteWinnersRef.current;
+        textarea.addEventListener('input', (e) => {
+          selectedNotes = e.target.value;
+        });
+      }
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: 'Updating...',
+          text: 'Please wait while we update the winners.',
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          },
+        });
+
+        await apiService("PUT", "/api/winners", {
+          data: {
+            ids: selectedWinners,
+            status: selectedStatus,
+            notes: selectedNotes,
+          }
+        });
+
+        setSelectedWinners([]);
+        getWinners(true);
+        Swal.close();
+        Swal.fire('Updated!', 'The status of the selected winners has been updated.', 'success');
+      }
+    });
+  }
+
   return (
     <PrivateLayout>
       <TableCard
@@ -214,12 +229,32 @@ function Page() {
                 <FontAwesomeIcon className="me-1" icon={faFileExcel} /> Export to Excel
               </Dropdown.Item>
             )}
+            {selectedWinners.length > 0 && can("edit winner") && (
+              <Dropdown.Item onClick={bulkUpdateStatus}>
+                <FontAwesomeIcon icon={faEdit} /> Bulk Update Status
+              </Dropdown.Item>
+            )}
           </Dropdown>
         )}
       >
         <TableCard.Table>
           <TableCard.Thead>
             <tr>
+              <TableCard.Th className="text-start">
+                <input
+                  type="checkbox"
+                  className="size-4 form-checkbox"
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      const allIds = winners?.data?.map(item => item.id) || [];
+                      setSelectedWinners(allIds);
+                    } else {
+                      setSelectedWinners([]);
+                    }
+                  }}
+                  checked={winners?.data?.length > 0 && selectedWinners.length === winners?.data?.length}
+                />
+              </TableCard.Th>
               <TableCard.Th className="text-start">No</TableCard.Th>
               <TableCard.Th className="text-start" sortBy="name">Winner</TableCard.Th>
               <TableCard.Th className="text-start" sortBy="doorprize->name">Doorprize</TableCard.Th>
@@ -242,6 +277,21 @@ function Page() {
                   }}
                   className="cursor-pointer"
                 >
+                  <TableCard.Td>
+                    <input
+                      type="checkbox"
+                      className="size-4 form-checkbox"
+                      onClick={(e) => e.stopPropagation()}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSelectedWinners([...selectedWinners, item.id]);
+                        } else {
+                          setSelectedWinners(selectedWinners.filter(id => id !== item.id));
+                        }
+                      }}
+                      checked={selectedWinners.includes(item.id)}
+                    />
+                  </TableCard.Td>
                   <TableCard.Td>{no(winners, index + 1)}</TableCard.Td>
                   <TableCard.Td>
                     {item.name} <br />

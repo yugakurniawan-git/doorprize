@@ -2,7 +2,7 @@ import Modal from "../../components/elements/Modal";
 import Button from "../../components/elements/Button";
 import { useState } from "react";
 import { apiServicePost } from "../../services/api.services";
-import { Toast } from "../../helpers";
+import { statusWinners, Toast } from "../../helpers";
 import useAuth from "../../hooks/useAuth";
 import TextArea from "../../components/elements/input/TextArea";
 import SelectInput from "../../components/elements/input/SelectInput";
@@ -35,14 +35,6 @@ function ModalDetail({ openModal, setOpenModal, winner, setWinner, loadData }) {
     setErrorWinner({});
     setWinner({});
   }
-
-  const statusLabels = [
-    { value: 1, label: "Claimed" },
-    { value: 2, label: "On Process" },
-    { value: 3, label: "Shipped" },
-    { value: 4, label: "Delivered" },
-    { value: 5, label: "Cancelled" },
-  ];
 
   return (
     <Modal show={openModal} onClose={handleCloseModal} size="w-xl">
@@ -96,8 +88,8 @@ function ModalDetail({ openModal, setOpenModal, winner, setWinner, loadData }) {
                 <td className="py-2">
                   <SelectInput
                     name="status"
-                    options={statusLabels}
-                    value={statusLabels.find((status) => status.value == winner.status)}
+                    options={statusWinners}
+                    value={statusWinners.find((status) => status.value == winner.status)}
                     onChange={(value) => setWinner({ ...winner, status: value ? value.value : null })}
                     isClearable={false}
                     error={errorWinner.status}
@@ -114,7 +106,7 @@ function ModalDetail({ openModal, setOpenModal, winner, setWinner, loadData }) {
                   <TextArea
                     name="notes"
                     placeholder="Enter notes"
-                    value={winner.notes}
+                    value={winner.notes || ""}
                     onChange={(e) => setWinner({ ...winner, notes: e.target.value })}
                     error={errorWinner.notes}
                     disabled={!can("edit winner")}

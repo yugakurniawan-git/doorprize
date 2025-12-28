@@ -4,11 +4,12 @@ namespace App\Models\Doorprize;
 
 use App\Models\BaseModel;
 use App\Models\CustomSoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Doorprize extends Model
 {
-  use BaseModel, CustomSoftDeletes;
+  use BaseModel, CustomSoftDeletes, HasFactory;
 
   protected $table      = 'doorprizes';
   public $incrementing  = false;

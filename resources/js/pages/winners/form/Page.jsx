@@ -87,7 +87,7 @@ function Page() {
                     <a href={image.image_url} data-fancybox="gallery">
                       <img
                         src={image.image_url}
-                        className="w-full h-32 object-cover rounded hover:opacity-80 duration-200 ease-in-out cursor-pointer"
+                        className="w-full h-60 object-cover rounded hover:opacity-80 duration-200 ease-in-out cursor-pointer"
                       />
                     </a>
                   </div>

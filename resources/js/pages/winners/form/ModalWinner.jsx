@@ -10,7 +10,7 @@ function ModalWinner({ winner, openModal, setOpenModal }) {
 	}
 
   return (
-		<Modal show={openModal} onClose={handleCloseModal} size="w-xl">
+		<Modal show={openModal} onClose={handleCloseModal} size="w-2xl">
       <form
         className="mb-0"
         onSubmit={(event) => handleSubmit(event)}
@@ -44,7 +44,7 @@ function ModalWinner({ winner, openModal, setOpenModal }) {
 											<a href={image.image_url} data-fancybox="gallery">
 												<img
 													src={image.image_url}
-													className="w-full h-32 object-cover rounded hover:opacity-80 duration-200 ease-in-out cursor-pointer"
+													className="w-full h-60 object-cover rounded hover:opacity-80 duration-200 ease-in-out cursor-pointer"
 												/>
 											</a>
 										</div>

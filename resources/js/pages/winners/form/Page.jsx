@@ -10,6 +10,7 @@ import Loading from "../../../components/elements/Loading";
 import { Fancybox } from "@fancyapps/ui";
 import "@fancyapps/ui/dist/fancybox/fancybox.css";
 import Swal from "sweetalert2";
+import ModalWinner from "./ModalWinner";
 
 function Page() {
   Fancybox.bind();
@@ -18,6 +19,7 @@ function Page() {
   const [isLoading, setIsLoading] = useState(false);
   const { id } = useParams();
   const [error, setError] = useState(null);
+  const [openModal, setOpenModal] = useState(true);
   const navigate = useNavigate();
   useEffect(() => {
     document.title = "Winner Form - Winners Management";
@@ -98,24 +100,13 @@ function Page() {
     return (
       <GuestLayout>
         <div className={`mb-8 text-center w-full ${isDarkMode ? "text-white" : "text-gray-800"}`}>
-          <h1 className="text-4xl font-bold">Congratulations!</h1>
+          <h1 
+            className="text-4xl font-bold cursor-pointer hover:text-rise duration-200 ease-in-out"
+            onClick={() => setOpenModal(true)}
+          >
+            Congratulations!
+          </h1>
           <p className="text-lg mt-2">You are a winner of the <span className="font-semibold">{winner.doorprize?.name || "doorprize"}</span>. Please fill out the form below to claim your prize.</p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 place-items-center">
-            {winner.doorprize?.images && winner.doorprize.images
-              .map((image, index) => {
-                const isLastAndOdd = index === winner.doorprize.images.length - 1 && winner.doorprize.images.length % 2 === 1;
-                return (
-                  <div key={index} className={`relative w-full max-w-xs ${isLastAndOdd ? 'md:col-span-2 md:justify-self-center' : ''}`}>
-                    <a href={image.image_url} data-fancybox="gallery">
-                      <img
-                        src={image.image_url}
-                        className="w-full h-32 object-cover rounded hover:opacity-80 duration-200 ease-in-out cursor-pointer"
-                      />
-                    </a>
-                  </div>
-                );
-              })}
-          </div>
         </div>
         <form onSubmit={onSubmit} className={`shadow-md rounded-lg overflow-hidden w-full max-w-md mx-auto ${isDarkMode ? "bg-gray-800" : "bg-white"}`}>
           <div className="p-5 grid grid-cols-1 gap-4">
@@ -184,9 +175,16 @@ function Page() {
             </div>
           </div>
         </form>
+
+        <ModalWinner
+          winner={winner}
+          openModal={openModal}
+          setOpenModal={setOpenModal}
+        />
       </GuestLayout>
     );
   }
 }
+
 
 export default Page;

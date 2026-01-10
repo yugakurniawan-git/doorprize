@@ -1,16 +1,17 @@
 import GuestLayout from "../../../components/layouts/GuestLayout";
 import Button from "../../../components/elements/Button";
 import TextInput from "../../../components/elements/input/TextInput";
-import { apiService, apiServicePost } from "../../../services/api.services";
+import { apiService } from "../../../services/api.services";
 import { useContext, useEffect, useState } from "react";
 import { DarkModeContext } from "../../../context/DarkMode";
 import TextArea from "../../../components/elements/input/TextArea";
-import { useNavigate, useParams } from "react-router";
+import { Link, useNavigate, useParams } from "react-router";
 import Loading from "../../../components/elements/Loading";
 import { Fancybox } from "@fancyapps/ui";
 import "@fancyapps/ui/dist/fancybox/fancybox.css";
 import Swal from "sweetalert2";
 import ModalWinner from "./ModalWinner";
+import { Tooltip } from "react-tooltip";
 
 function Page() {
   Fancybox.bind();
@@ -76,8 +77,16 @@ function Page() {
   } else if (winner.claimed_at) {
     return (
       <div className={`w-screen h-screen flex flex-col justify-center items-center gap-2 ${isDarkMode ? "bg-[url(/images/background/product-bg-dark.png)]" : "bg-[url(/images/background/product-bg.jpg)]"} bg-no-repeat bg-cover`}>
-        <p className="text-[2.375rem] font-bold text-rise">Thank You {winner.name}</p>
-        <p className="text-rise font-sans">You have already claimed your {winner.doorprize?.name || "prize"}. Your gift will be sent within 14 working days.</p>
+        <Tooltip
+          id="tooltip"
+          className="bg-gray-700 text-white text-xs p-2 rounded shadow-lg z-50"
+          isOpen={true}
+        />
+        <p className="text-[2.375rem] font-bold text-rise text-center">Terima Kasih {winner.name}</p>
+        <p className="text-rise font-sans text-center">
+          Anda telah mengklaim {winner.doorprize?.name || "prize"} Anda. <br/>
+          Hadiah Anda akan dikirim dalam waktu 14 hari kerja. <br/>
+        </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 place-items-center">
             {winner.doorprize?.images && winner.doorprize.images
               .map((image, index) => {
@@ -93,6 +102,17 @@ function Page() {
                   </div>
                 );
               })}
+        </div>
+        <div className="fixed bottom-8 right-8">
+          <Link 
+            to="https://wa.me/6282132249646" 
+            target="_blank" 
+            className="shadow-lg"
+            data-tooltip-id="tooltip"
+            data-tooltip-content="CS: +62 8213-2249-646"
+          >
+            <img src="/logo/wa.webp" alt="WhatsApp" className="size-14 inline-block"/>
+          </Link>
         </div>
       </div>
     );

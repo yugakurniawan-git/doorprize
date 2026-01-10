@@ -77,7 +77,7 @@ function Page() {
     return (
       <div className={`w-screen h-screen flex flex-col justify-center items-center gap-2 ${isDarkMode ? "bg-[url(/images/background/product-bg-dark.png)]" : "bg-[url(/images/background/product-bg.jpg)]"} bg-no-repeat bg-cover`}>
         <p className="text-[2.375rem] font-bold text-rise">Thank You {winner.name}</p>
-        <p className="text-rise font-sans">You have already claimed your {winner.doorprize?.name || "prize"}.</p>
+        <p className="text-rise font-sans">You have already claimed your {winner.doorprize?.name || "prize"}. Your gift will be sent within 14 working days.</p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 place-items-center">
             {winner.doorprize?.images && winner.doorprize.images
               .map((image, index) => {

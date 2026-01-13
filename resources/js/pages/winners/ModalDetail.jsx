@@ -1,11 +1,12 @@
 import Modal from "../../components/elements/Modal";
 import Button from "../../components/elements/Button";
 import { useState } from "react";
-import { apiServicePost } from "../../services/api.services";
+import { apiServiceDelete, apiServicePost } from "../../services/api.services";
 import { statusWinners, Toast } from "../../helpers";
 import useAuth from "../../hooks/useAuth";
 import TextArea from "../../components/elements/input/TextArea";
 import SelectInput from "../../components/elements/input/SelectInput";
+import Swal from "sweetalert2";
 
 function ModalDetail({ openModal, setOpenModal, winner, setWinner, loadData }) {
   const [errorWinner, setErrorWinner] = useState({});
@@ -34,6 +35,31 @@ function ModalDetail({ openModal, setOpenModal, winner, setWinner, loadData }) {
     setOpenModal(false);
     setErrorWinner({});
     setWinner({});
+  }
+
+  async function handleDelete() {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const response = await apiServiceDelete("/api/winners/" + winner?.id);
+        if ([200, 201].includes(response.status)) {
+          loadData();
+          handleCloseModal();
+          Swal.fire(
+            'Deleted!',
+            'Winner has been deleted.',
+            'success'
+          );
+        }
+      }
+    });
   }
 
   return (
@@ -117,6 +143,9 @@ function ModalDetail({ openModal, setOpenModal, winner, setWinner, loadData }) {
           </table>
         </Modal.Body>
         <Modal.Footer className={`flex justify-between items-center gap-2`}>
+          {can("delete winner") && (
+            <Button type="button" bg="bg-black" onClick={handleDelete}>Delete</Button>
+          )}
           <div className="flex gap-2 ms-auto">
             <Button type="button" bg="bg-gray-500" onClick={handleCloseModal}>Cancel</Button>
             {can("edit winner") && (

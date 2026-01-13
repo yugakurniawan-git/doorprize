@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Doorprize\Winner;
 use Dedoc\Scramble\Attributes\QueryParameter;
-use Illuminate\Support\Facades\Storage;
 
 class WinnerController extends Controller
 {
@@ -151,7 +150,14 @@ class WinnerController extends Controller
    */
   public function destroy(Winner $winner)
   {
-    $winner->delete();
+    $winner->update([
+      'name'      => null,
+      'email'     => null,
+      'phone'     => null,
+      'address'   => null,
+      'status'    => 0,
+      'claimed_at'=> null,
+    ]);
     return ['message' => 'Winner deleted successfully.'];
   }
 }

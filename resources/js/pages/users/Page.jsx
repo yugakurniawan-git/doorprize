@@ -38,11 +38,13 @@ function Page() {
 
   useEffect(() => {
     document.title = "Doorprize - Users Management";
-    setParams((prev) => ({
-      ...prev,
-      sort_by: params.sort_by || "created_at",
-      sort_type: params.sort_type || "desc",
-    }));
+    if (!params.sort_by || !params.sort_type) {
+      setParams((prev) => ({
+        ...prev,
+        sort_by: params.sort_by || "created_at",
+        sort_type: params.sort_type || "desc",
+      }));
+    }
   }, []);
 
 	useEffect(() => {

@@ -46,12 +46,14 @@ function Page() {
 
   useEffect(() => {
     document.title = "Winner - Winners Management";
-    setParams((prev) => ({
-      ...prev,
-      sort_by: params.sort_by || "created_at",
-      sort_type: params.sort_type || "desc",
-      "claimed_at:not_null": 1
-    }));
+    if (!params.sort_by || !params.sort_type || !params["claimed_at:not_null"]) {
+      setParams((prev) => ({
+        ...prev,
+        sort_by: params.sort_by || "created_at",
+        sort_type: params.sort_type || "desc",
+        "claimed_at:not_null": 1
+      }));
+    }
   }, []);
 
 	useEffect(() => {

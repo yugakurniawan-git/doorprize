@@ -387,7 +387,6 @@ trait BaseModel
     }
 
     $perPage = request('per_page', $options['per_page']);
-    Log::info("SQL Query: " . $query->toSql());
 
     // Handle the case when per_page is -1 (get all data)
     if ($perPage == -1) {

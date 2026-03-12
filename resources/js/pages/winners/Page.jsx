@@ -267,7 +267,7 @@ function Page() {
             </tr>
           </TableCard.Thead>
           <TableCard.Tbody>
-            {isLoading ? <TableCard.Loading totalColumns={9} /> : winners?.data?.length > 0 ? (
+            {isLoading ? <TableCard.Loading totalColumns={10} /> : winners?.data?.length > 0 ? (
               winners?.data?.map((item, index) => (
                 <TableCard.Tr
                   key={item.id}
@@ -315,7 +315,7 @@ function Page() {
                   </TableCard.Td>
                 </TableCard.Tr>
               ))
-            ) : <TableCard.Empty totalColumns={9} />}
+            ) : <TableCard.Empty totalColumns={10} />}
           </TableCard.Tbody>
         </TableCard.Table>
       </TableCard>

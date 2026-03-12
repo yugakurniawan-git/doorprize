@@ -54,7 +54,7 @@ trait BaseModel
   public function scopeInclude($query)
   {
     if (request()->has('include') && is_array(request('include')) && count(request('include')) > 0) {
-      return $query->with(request('include'));
+      return $query->with($this->normalizeIncludeRelations(request('include')));
     }
   }
 
@@ -114,8 +114,10 @@ trait BaseModel
     $table = $this->connection ? $this->connection . '.dbo.' . $this->table : $this->table;
 
     $query->where(function ($subQuery) use ($table, $search) {
-      if (request()->has('fields') && is_array(request('fields')) && count(request('fields')) > 0) {
-        foreach (request('fields') as $field) {
+      $mainFields = $this->getMainSearchFields();
+
+      if (!empty($mainFields)) {
+        foreach ($mainFields as $key => $field) {
           if (str_contains($field, '.*')) {
             $field = str_replace('.*', '', $field);
             $columns = DB::getSchemaBuilder()->getColumnListing($field);
@@ -126,37 +128,94 @@ trait BaseModel
             if (str_contains($field, ' as ')) {
               $field = explode(' as ', $field)[0];
             }
-            $subQuery->orWhere("{$field}", 'like', '%' . $search . '%');
+            $method = $key === 0 ? 'where' : 'orWhere';
+            if (str_contains($field, '.')) {
+              $subQuery->$method("{$field}", 'like', '%' . $search . '%');
+            } else {
+              $subQuery->$method("{$table}.{$field}", 'like', '%' . $search . '%');
+            }
           }
-        }
-      } else {
-        foreach ($this->fillable as $key => $column) {
-          $method = $key === 0 ? 'where' : 'orWhere';
-          $subQuery->$method("{$table}.{$column}", 'like', '%' . $search . '%');
         }
       }
 
       if (request()->has('include') && is_array(request('include')) && count(request('include')) > 0) {
-        foreach (request('include') as $relation) {
+        foreach ($this->normalizeIncludeRelations(request('include')) as $relation) {
           $this->applySearchNestedRelation($subQuery, $relation, $search);
         }
       }
     });
   }
 
+  private function getMainSearchFields(): array
+  {
+    if (request()->has('fields') && is_array(request('fields')) && count(request('fields')) > 0) {
+      return request('fields');
+    }
+
+    return $this->fillable ?? [];
+  }
+
+  private function normalizeIncludeRelations(array $includes): array
+  {
+    $normalized = [];
+
+    foreach ($includes as $include) {
+      if (!is_string($include) || trim($include) === '') {
+        continue;
+      }
+
+      if (!str_contains($include, ':')) {
+        $normalized[] = $include;
+        continue;
+      }
+
+      $segments = array_map('trim', explode(',', $include));
+      $current = null;
+
+      foreach ($segments as $segment) {
+        if ($segment === '') {
+          continue;
+        }
+
+        if (str_contains($segment, ':')) {
+          if ($current !== null) {
+            $normalized[] = $current;
+          }
+          $current = $segment;
+        } else {
+          if ($current === null) {
+            $normalized[] = $segment;
+          } else {
+            $current .= ',' . $segment;
+          }
+        }
+      }
+
+      if ($current !== null) {
+        $normalized[] = $current;
+      }
+    }
+
+    return array_values(array_unique($normalized));
+  }
+
   private function applySearchNestedRelation($query, $relation, $search)
   {
     // Pisahkan antara path dan field
-    $parts = explode(':', $relation);
+    $parts = explode(':', $relation, 2);
     $path = $parts[0]; // e.g. "course.department.faculty"
-    $fields = isset($parts[1]) ? explode(',', $parts[1]) : [];
+    $fields = isset($parts[1]) ? array_values(array_filter(array_map('trim', explode(',', $parts[1])))) : [];
+
+    if (empty($fields)) {
+      return;
+    }
 
     $relations = explode('.', $path);
 
-    $this->recursiveRelationSearch($query, $relations, $fields, $search);
+    $this->recursiveRelationSearch($query, $relations, $fields, $search, true);
   }
 
-  public function recursiveRelationSearch($query, $relations, $fields, $search)
+  public function recursiveRelationSearch($query, $relations, $fields, $search, $useOrWhereHas = true)
   {
     $relationName = array_shift($relations);
 
@@ -164,11 +223,13 @@ trait BaseModel
       return;
     }
 
-    $query->orWhereHas($relationName, function ($relQuery) use ($relations, $fields, $search, $relationName) {
+    $whereHasMethod = $useOrWhereHas ? 'orWhereHas' : 'whereHas';
+
+    $query->$whereHasMethod($relationName, function ($relQuery) use ($relations, $fields, $search, $relationName) {
       // Kalau masih ada nested relasi → lanjut rekursif
       if (!empty($relations)) {
         $relatedModel = $this->$relationName()->getRelated();
-        $relatedModel->recursiveRelationSearch($relQuery, $relations, $fields, $search);
+        $relatedModel->recursiveRelationSearch($relQuery, $relations, $fields, $search, false);
       } else {
         // Sudah mentok, apply field search
         foreach ($fields as $i => $field) {

@@ -6,7 +6,7 @@ function Page () {
   useUrlParams();
 
   useEffect(() => {
-    document.title = "UAIS - Home";
+    document.title = "Doorprize - Home";
   }, []);
 
   return (
